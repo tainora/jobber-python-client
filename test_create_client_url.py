@@ -2,10 +2,13 @@
 """
 Create a Jobber client and show the clickable URL.
 """
+
 import sys
-sys.path.insert(0, '/Users/terryli/own/jobber')
+
+sys.path.insert(0, "/Users/terryli/own/jobber")
 
 from jobber import JobberClient
+
 
 def main():
     print("=== Creating Jobber Client with Visual Confirmation URL ===\n")
@@ -33,26 +36,22 @@ def main():
         """
 
         variables = {
-            'input': {
-                'firstName': 'Test',
-                'lastName': 'Client',
-                'companyName': 'Demo Company'
-            }
+            "input": {"firstName": "Test", "lastName": "Client", "companyName": "Demo Company"}
         }
 
         print("Sending request to Jobber API...\n")
         result = client.execute_query(mutation, variables)
 
         # Check for errors
-        if result['clientCreate']['userErrors']:
-            errors = result['clientCreate']['userErrors']
+        if result["clientCreate"]["userErrors"]:
+            errors = result["clientCreate"]["userErrors"]
             print(f"❌ Failed to create client:")
             for error in errors:
                 print(f"   - {error['message']}")
             return 1
 
         # Extract client data
-        created = result['clientCreate']['client']
+        created = result["clientCreate"]["client"]
 
         # Display results with clickable URL
         print("=" * 70)
@@ -76,8 +75,10 @@ def main():
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     exit(main())

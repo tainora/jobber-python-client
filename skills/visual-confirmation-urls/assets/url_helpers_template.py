@@ -23,7 +23,7 @@ def format_success(
     resource_data: dict[str, Any],
     name_field: str = "name",
     url_field: str = "web_url",
-    service_name: str = "Web UI"
+    service_name: str = "Web UI",
 ) -> str:
     """
     Format success message with web link for visual confirmation.
@@ -62,7 +62,7 @@ def format_success(
         raise TypeError(f"resource_data must be dict, got {type(resource_data).__name__}")
 
     # Validate required fields (fail-fast)
-    if 'id' not in resource_data:
+    if "id" not in resource_data:
         raise KeyError("resource_data missing required field: 'id'")
 
     if url_field not in resource_data:
@@ -72,7 +72,7 @@ def format_success(
         )
 
     # Get display name (fallback to ID if name field missing)
-    display_name = resource_data.get(name_field, resource_data['id'])
+    display_name = resource_data.get(name_field, resource_data["id"])
 
     return (
         f"✅ {resource_type} created: {display_name}\n"
@@ -130,10 +130,7 @@ def clickable_link(url: str, text: str | None = None) -> str:
         return f"{display_text} ({url})" if text else url
 
 
-def validate_url(
-    resource_data: dict[str, Any],
-    field: str = "web_url"
-) -> str:
+def validate_url(resource_data: dict[str, Any], field: str = "web_url") -> str:
     """
     Validate that URL field is present in resource data.
 
@@ -200,8 +197,8 @@ JOBBER_CONFIG = {
         "Client": "name",
         "Job": "title",
         "Quote": "quoteNumber",
-        "Invoice": "invoiceNumber"
-    }
+        "Invoice": "invoiceNumber",
+    },
 }
 
 # Stripe configuration
@@ -209,28 +206,21 @@ STRIPE_CONFIG = {
     "url_fields": {
         "Charge": "receipt_url",
         "Invoice": "hosted_invoice_url",
-        "PaymentIntent": "receipt_url"
+        "PaymentIntent": "receipt_url",
     },
-    "service_name": "Stripe Dashboard"
+    "service_name": "Stripe Dashboard",
 }
 
 # GitHub configuration
 GITHUB_CONFIG = {
     "url_field": "html_url",
     "service_name": "GitHub",
-    "name_fields": {
-        "Issue": "title",
-        "PullRequest": "title",
-        "Commit": "sha"
-    }
+    "name_fields": {"Issue": "title", "PullRequest": "title", "Commit": "sha"},
 }
 
 # Linear configuration
 LINEAR_CONFIG = {
     "url_field": "url",
     "service_name": "Linear",
-    "name_fields": {
-        "Issue": "title",
-        "Project": "name"
-    }
+    "name_fields": {"Issue": "title", "Project": "name"},
 }

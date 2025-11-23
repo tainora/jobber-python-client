@@ -6,6 +6,7 @@ Shows the actual URL format returned by Jobber API when you create resources.
 This demonstrates what you'll see after creating a client, job, quote, or invoice.
 """
 
+
 def show_url_examples():
     """Display examples of actual Jobber URLs with explanations."""
 
@@ -223,5 +224,6 @@ def show_url_examples():
     print("=" * 80)
     print()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     show_url_examples()

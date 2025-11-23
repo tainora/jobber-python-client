@@ -26,11 +26,13 @@ import requests
 # Custom exceptions (fail-fast design)
 class AuthorizationError(Exception):
     """OAuth authorization failed"""
+
     pass
 
 
 class ConfigurationError(Exception):
     """Configuration or setup issue"""
+
     pass
 
 
@@ -41,10 +43,7 @@ def demonstrate_doppler_errors():
     # Error 1: Doppler CLI not found
     try:
         result = subprocess.run(
-            ['doppler', '--version'],
-            capture_output=True,
-            check=True,
-            timeout=5
+            ["doppler", "--version"], capture_output=True, check=True, timeout=5
         )
         print("✓ Doppler CLI found")
         print(f"  Version: {result.stdout.decode().strip()}")
@@ -61,16 +60,21 @@ def demonstrate_doppler_errors():
     try:
         result = subprocess.run(
             [
-                'doppler', 'secrets', 'get',
-                'EXAMPLE_CLIENT_ID', 'EXAMPLE_CLIENT_SECRET',
-                '--project', 'nonexistent-project',
-                '--config', 'dev',
-                '--plain'
+                "doppler",
+                "secrets",
+                "get",
+                "EXAMPLE_CLIENT_ID",
+                "EXAMPLE_CLIENT_SECRET",
+                "--project",
+                "nonexistent-project",
+                "--config",
+                "dev",
+                "--plain",
             ],
             capture_output=True,
             text=True,
             check=True,
-            timeout=10
+            timeout=10,
         )
         print("✓ Secrets found")
     except subprocess.CalledProcessError as e:
@@ -90,7 +94,7 @@ def demonstrate_port_errors():
     # Try to bind to ports
     for port in PORT_RANGE:
         try:
-            server = HTTPServer(('127.0.0.1', port), BaseHTTPRequestHandler)
+            server = HTTPServer(("127.0.0.1", port), BaseHTTPRequestHandler)
             print(f"✓ Port {port} available")
             server.server_close()
             break
@@ -99,7 +103,7 @@ def demonstrate_port_errors():
 
     else:
         # No ports available
-        print(f"\n✗ Error: No available ports in range {PORT_RANGE.start}-{PORT_RANGE.stop-1}")
+        print(f"\n✗ Error: No available ports in range {PORT_RANGE.start}-{PORT_RANGE.stop - 1}")
         print("  Resolution: Close applications using these ports")
         print("  Command: lsof -i :3000-3005")
         print("  Or: Change PORT_RANGE in script")
@@ -114,20 +118,20 @@ def demonstrate_authorization_errors():
     # Simulate various authorization errors
     error_scenarios = [
         {
-            'error': 'access_denied',
-            'description': 'User clicked Deny',
-            'resolution': 'Re-run script and click Approve'
+            "error": "access_denied",
+            "description": "User clicked Deny",
+            "resolution": "Re-run script and click Approve",
         },
         {
-            'error': 'unauthorized_client',
-            'description': 'Client not authorized for this grant type',
-            'resolution': 'Check OAuth app settings, enable Authorization Code grant'
+            "error": "unauthorized_client",
+            "description": "Client not authorized for this grant type",
+            "resolution": "Check OAuth app settings, enable Authorization Code grant",
         },
         {
-            'error': 'invalid_scope',
-            'description': 'Requested scopes not available',
-            'resolution': 'Check scope names, ensure app has required permissions'
-        }
+            "error": "invalid_scope",
+            "description": "Requested scopes not available",
+            "resolution": "Check scope names, ensure app has required permissions",
+        },
     ]
 
     for scenario in error_scenarios:
@@ -144,30 +148,30 @@ def demonstrate_token_exchange_errors():
     # Simulate token exchange errors
     exchange_errors = [
         {
-            'status': 400,
-            'cause': 'Invalid authorization code (expired or already used)',
-            'resolution': 'Restart authorization flow (codes expire in 5-10 minutes)'
+            "status": 400,
+            "cause": "Invalid authorization code (expired or already used)",
+            "resolution": "Restart authorization flow (codes expire in 5-10 minutes)",
         },
         {
-            'status': 400,
-            'cause': 'Redirect URI mismatch',
-            'resolution': 'Ensure redirect_uri matches authorization request exactly'
+            "status": 400,
+            "cause": "Redirect URI mismatch",
+            "resolution": "Ensure redirect_uri matches authorization request exactly",
         },
         {
-            'status': 400,
-            'cause': 'PKCE validation failed',
-            'resolution': 'Verify code_verifier matches code_challenge (S256)'
+            "status": 400,
+            "cause": "PKCE validation failed",
+            "resolution": "Verify code_verifier matches code_challenge (S256)",
         },
         {
-            'status': 401,
-            'cause': 'Invalid client credentials',
-            'resolution': 'Check CLIENT_ID and CLIENT_SECRET in Doppler'
+            "status": 401,
+            "cause": "Invalid client credentials",
+            "resolution": "Check CLIENT_ID and CLIENT_SECRET in Doppler",
         },
         {
-            'status': 500,
-            'cause': 'Provider server error',
-            'resolution': 'Wait and retry, check provider status page'
-        }
+            "status": 500,
+            "cause": "Provider server error",
+            "resolution": "Wait and retry, check provider status page",
+        },
     ]
 
     for error in exchange_errors:
@@ -182,10 +186,7 @@ def demonstrate_network_errors():
 
     # Connection timeout
     try:
-        response = requests.get(
-            'https://api.example.com/oauth/token',
-            timeout=5
-        )
+        response = requests.get("https://api.example.com/oauth/token", timeout=5)
     except requests.Timeout:
         print("✗ Error: Connection timeout")
         print("  Resolution: Check network connectivity, increase timeout")
@@ -205,7 +206,7 @@ def demonstrate_comprehensive_flow():
         try:
             # Step 1: Check Doppler
             print("1. Checking Doppler CLI...")
-            subprocess.run(['doppler', '--version'], check=True, capture_output=True)
+            subprocess.run(["doppler", "--version"], check=True, capture_output=True)
 
             # Step 2: Load credentials
             print("2. Loading credentials from Doppler...")
@@ -216,7 +217,7 @@ def demonstrate_comprehensive_flow():
             print("3. Finding available port...")
             for port in range(3000, 3005):
                 try:
-                    HTTPServer(('127.0.0.1', port), BaseHTTPRequestHandler).server_close()
+                    HTTPServer(("127.0.0.1", port), BaseHTTPRequestHandler).server_close()
                     print(f"   ✓ Port {port} available")
                     break
                 except OSError:
@@ -284,5 +285,5 @@ def main():
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

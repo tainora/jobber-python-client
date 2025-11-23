@@ -42,12 +42,12 @@ def main() -> int:
     result = client.execute_query(query)
 
     print("Recent clients:\n")
-    for client_data in result['clients']['nodes']:
+    for client_data in result["clients"]["nodes"]:
         print(f"• {client_data['firstName']} {client_data['lastName']}")
         print(f"  🔗 {client_data['jobberWebUri']}\n")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

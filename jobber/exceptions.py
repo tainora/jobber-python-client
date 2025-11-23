@@ -66,7 +66,7 @@ class RateLimitError(JobberException):
         self,
         message: str,
         throttle_status: dict[str, int] | None = None,
-        context: dict[str, Any] | None = None
+        context: dict[str, Any] | None = None,
     ):
         super().__init__(message, context)
         self.throttle_status = throttle_status or {}
@@ -93,14 +93,10 @@ class GraphQLError(JobberException):
     """
 
     def __init__(
-        self,
-        message: str,
-        errors: list,
-        query: str,
-        context: dict[str, Any] | None = None
+        self, message: str, errors: list, query: str, context: dict[str, Any] | None = None
     ):
         context = context or {}
-        context.update({'errors': errors, 'query': query})
+        context.update({"errors": errors, "query": query})
         super().__init__(message, context)
         self.errors = errors
         self.query = query

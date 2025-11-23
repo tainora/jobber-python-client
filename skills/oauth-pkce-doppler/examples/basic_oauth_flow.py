@@ -39,10 +39,10 @@ class CallbackHandler(BaseHTTPRequestHandler):
         global auth_code
         query = parse_qs(urlparse(self.path).query)
 
-        if 'code' in query:
-            auth_code = query['code'][0]
+        if "code" in query:
+            auth_code = query["code"][0]
             self.send_response(200)
-            self.send_header('Content-type', 'text/html')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(b"<h1>Success! Close this window.</h1>")
         else:
@@ -58,15 +58,15 @@ def main():
 
     # Step 1: Generate PKCE parameters
     print("1. Generating PKCE parameters...")
-    verifier = base64.urlsafe_b64encode(os.urandom(40)).decode().rstrip('=')
+    verifier = base64.urlsafe_b64encode(os.urandom(40)).decode().rstrip("=")
     challenge_bytes = hashlib.sha256(verifier.encode()).digest()
-    challenge = base64.urlsafe_b64encode(challenge_bytes).decode().rstrip('=')
+    challenge = base64.urlsafe_b64encode(challenge_bytes).decode().rstrip("=")
     print(f"   Code verifier: {verifier[:20]}...")
     print(f"   Code challenge: {challenge[:20]}...")
 
     # Step 2: Start callback server
     print("\n2. Starting callback server...")
-    server = HTTPServer(('127.0.0.1', CALLBACK_PORT), CallbackHandler)
+    server = HTTPServer(("127.0.0.1", CALLBACK_PORT), CallbackHandler)
     redirect_uri = f"http://localhost:{CALLBACK_PORT}/callback"
     print(f"   Listening on {redirect_uri}")
 
@@ -74,10 +74,7 @@ def main():
     print("\n3. Building authorization URL...")
     client = WebApplicationClient(CLIENT_ID)
     auth_url = client.prepare_request_uri(
-        AUTH_URL,
-        redirect_uri=redirect_uri,
-        code_challenge=challenge,
-        code_challenge_method='S256'
+        AUTH_URL, redirect_uri=redirect_uri, code_challenge=challenge, code_challenge_method="S256"
     )
     print(f"   URL: {auth_url[:80]}...")
 
@@ -102,5 +99,5 @@ def main():
     return 0 if auth_code else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

@@ -39,16 +39,13 @@ def fetch_all_pages(executor: GraphQLExecutor) -> list[dict]:
     page_count = 0
 
     while True:
-        variables = {
-            'first': 100,
-            'after': cursor
-        }
+        variables = {"first": 100, "after": cursor}
 
         result = executor.execute(query, variables)
 
         # Extract nodes and pageInfo
-        users = result['users']['nodes']
-        page_info = result['users']['pageInfo']
+        users = result["users"]["nodes"]
+        page_info = result["users"]["pageInfo"]
 
         all_users.extend(users)
         page_count += 1
@@ -56,10 +53,10 @@ def fetch_all_pages(executor: GraphQLExecutor) -> list[dict]:
         print(f"Page {page_count}: Fetched {len(users)} users")
 
         # Check if more pages exist
-        if not page_info['hasNextPage']:
+        if not page_info["hasNextPage"]:
             break
 
-        cursor = page_info['endCursor']
+        cursor = page_info["endCursor"]
 
     return all_users
 
@@ -69,8 +66,7 @@ def main() -> int:
     print("=== GraphQL Cursor-Based Pagination ===\n")
 
     executor = GraphQLExecutor(
-        access_token="your_access_token",
-        api_url="https://api.example.com/graphql"
+        access_token="your_access_token", api_url="https://api.example.com/graphql"
     )
 
     try:
@@ -85,5 +81,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

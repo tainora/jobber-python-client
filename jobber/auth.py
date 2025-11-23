@@ -25,6 +25,7 @@ from .exceptions import AuthenticationError, ConfigurationError
 @dataclass
 class TokenInfo:
     """OAuth token information"""
+
     access_token: str
     refresh_token: str
     expires_at: int  # Unix timestamp
@@ -66,7 +67,7 @@ class TokenManager:
         doppler_project: str,
         doppler_config: str,
         proactive_refresh: bool = True,
-        refresh_buffer_seconds: int = 300
+        refresh_buffer_seconds: int = 300,
     ):
         """
         Initialize token manager.
@@ -102,11 +103,8 @@ class TokenManager:
 
     @classmethod
     def from_doppler(
-        cls,
-        doppler_project: str,
-        doppler_config: str,
-        **kwargs: Any
-    ) -> 'TokenManager':
+        cls, doppler_project: str, doppler_config: str, **kwargs: Any
+    ) -> "TokenManager":
         """
         Create TokenManager loading credentials from Doppler.
 
@@ -170,21 +168,25 @@ class TokenManager:
         try:
             result = subprocess.run(
                 [
-                    'doppler', 'secrets', 'get',
-                    'JOBBER_ACCESS_TOKEN',
-                    'JOBBER_REFRESH_TOKEN',
-                    'JOBBER_TOKEN_EXPIRES_AT',
-                    '--project', self.doppler_project,
-                    '--config', self.doppler_config,
-                    '--plain'
+                    "doppler",
+                    "secrets",
+                    "get",
+                    "JOBBER_ACCESS_TOKEN",
+                    "JOBBER_REFRESH_TOKEN",
+                    "JOBBER_TOKEN_EXPIRES_AT",
+                    "--project",
+                    self.doppler_project,
+                    "--config",
+                    self.doppler_config,
+                    "--plain",
                 ],
                 capture_output=True,
                 text=True,
                 check=True,
-                timeout=10
+                timeout=10,
             )
 
-            lines = result.stdout.strip().split('\n')
+            lines = result.stdout.strip().split("\n")
             if len(lines) != 3:
                 raise ConfigurationError(
                     f"Expected 3 tokens from Doppler, got {len(lines)}. "
@@ -201,9 +203,7 @@ class TokenManager:
                 ) from e
 
             return TokenInfo(
-                access_token=access_token,
-                refresh_token=refresh_token,
-                expires_at=expires_at_int
+                access_token=access_token, refresh_token=refresh_token, expires_at=expires_at_int
             )
 
         except subprocess.CalledProcessError as e:
@@ -226,20 +226,24 @@ class TokenManager:
         try:
             result = subprocess.run(
                 [
-                    'doppler', 'secrets', 'get',
-                    'JOBBER_CLIENT_ID',
-                    'JOBBER_CLIENT_SECRET',
-                    '--project', project,
-                    '--config', config,
-                    '--plain'
+                    "doppler",
+                    "secrets",
+                    "get",
+                    "JOBBER_CLIENT_ID",
+                    "JOBBER_CLIENT_SECRET",
+                    "--project",
+                    project,
+                    "--config",
+                    config,
+                    "--plain",
                 ],
                 capture_output=True,
                 text=True,
                 check=True,
-                timeout=10
+                timeout=10,
             )
 
-            lines = result.stdout.strip().split('\n')
+            lines = result.stdout.strip().split("\n")
             if len(lines) != 2:
                 raise ConfigurationError(
                     f"Expected JOBBER_CLIENT_ID and JOBBER_CLIENT_SECRET in Doppler. "
@@ -249,9 +253,7 @@ class TokenManager:
             return lines[0], lines[1]
 
         except subprocess.CalledProcessError as e:
-            raise ConfigurationError(
-                f"Failed to load client credentials: {e.stderr}"
-            ) from e
+            raise ConfigurationError(f"Failed to load client credentials: {e.stderr}") from e
 
     def _refresh_token(self) -> None:
         """
@@ -266,23 +268,23 @@ class TokenManager:
             response = requests.post(
                 self.TOKEN_URL,
                 data={
-                    'grant_type': 'refresh_token',
-                    'refresh_token': self._token.refresh_token,
-                    'client_id': self.client_id,
-                    'client_secret': self.client_secret,
+                    "grant_type": "refresh_token",
+                    "refresh_token": self._token.refresh_token,
+                    "client_id": self.client_id,
+                    "client_secret": self.client_secret,
                 },
-                timeout=30
+                timeout=30,
             )
             response.raise_for_status()
 
             data = response.json()
 
             # Update token info
-            expires_at = int(time.time()) + data['expires_in']
+            expires_at = int(time.time()) + data["expires_in"]
             self._token = TokenInfo(
-                access_token=data['access_token'],
-                refresh_token=data.get('refresh_token', self._token.refresh_token),
-                expires_at=expires_at
+                access_token=data["access_token"],
+                refresh_token=data.get("refresh_token", self._token.refresh_token),
+                expires_at=expires_at,
             )
 
             # Update Doppler
@@ -295,7 +297,7 @@ class TokenManager:
         except requests.RequestException as e:
             raise AuthenticationError(
                 f"Token refresh failed: {e}",
-                context={'refresh_token': self._token.refresh_token[:8] + '...'}
+                context={"refresh_token": self._token.refresh_token[:8] + "..."},
             ) from e
 
     def _save_to_doppler(self) -> None:
@@ -306,30 +308,33 @@ class TokenManager:
             AuthenticationError: Doppler update fails
         """
         secrets = {
-            'JOBBER_ACCESS_TOKEN': self._token.access_token,
-            'JOBBER_REFRESH_TOKEN': self._token.refresh_token,
-            'JOBBER_TOKEN_EXPIRES_AT': str(self._token.expires_at)
+            "JOBBER_ACCESS_TOKEN": self._token.access_token,
+            "JOBBER_REFRESH_TOKEN": self._token.refresh_token,
+            "JOBBER_TOKEN_EXPIRES_AT": str(self._token.expires_at),
         }
 
         for name, value in secrets.items():
             try:
                 subprocess.run(
                     [
-                        'doppler', 'secrets', 'set', name,
-                        '--project', self.doppler_project,
-                        '--config', self.doppler_config,
-                        '--silent'
+                        "doppler",
+                        "secrets",
+                        "set",
+                        name,
+                        "--project",
+                        self.doppler_project,
+                        "--config",
+                        self.doppler_config,
+                        "--silent",
                     ],
                     input=value,
                     text=True,
                     check=True,
                     capture_output=True,
-                    timeout=10
+                    timeout=10,
                 )
             except subprocess.CalledProcessError as e:
-                raise AuthenticationError(
-                    f"Failed to update {name} in Doppler: {e.stderr}"
-                ) from e
+                raise AuthenticationError(f"Failed to update {name} in Doppler: {e.stderr}") from e
 
     def _schedule_refresh(self) -> None:
         """Schedule proactive token refresh (must hold lock)"""

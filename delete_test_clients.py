@@ -41,9 +41,9 @@ def decode_global_id(encoded_id: str) -> int:
     """Decode base64-encoded GraphQL global ID to numeric ID."""
     try:
         # Decode from base64
-        decoded = base64.b64decode(encoded_id).decode('utf-8')
+        decoded = base64.b64decode(encoded_id).decode("utf-8")
         # Format: gid://Jobber/Client/123456
-        numeric_id = int(decoded.split('/')[-1])
+        numeric_id = int(decoded.split("/")[-1])
         return numeric_id
     except Exception:
         return None
@@ -75,7 +75,7 @@ def main():
     """
 
     result = client.execute_query(query)
-    all_clients = result['clients']['nodes']
+    all_clients = result["clients"]["nodes"]
 
     # Test clients to identify (numeric ID, name pattern)
     test_patterns = [
@@ -91,7 +91,7 @@ def main():
     test_client_count = 0
     for c in all_clients:
         # Extract numeric ID from encoded global ID
-        encoded_id = c['id']  # Z2lkOi8vSm9iYmVyL0NsaWVudC8xMjM0NTY=
+        encoded_id = c["id"]  # Z2lkOi8vSm9iYmVyL0NsaWVudC8xMjM0NTY=
         numeric_id = decode_global_id(encoded_id)
 
         if numeric_id is None:
@@ -105,8 +105,8 @@ def main():
             test_client_count += 1
 
         name = f"{c['firstName']} {c['lastName']}"
-        company = c.get('companyName', 'No company')
-        url = c.get('jobberWebUri', 'No URL')
+        company = c.get("companyName", "No company")
+        url = c.get("jobberWebUri", "No URL")
 
         print(f"{marker}: {name} ({company})")
         print(f"       ID: {numeric_id}")
@@ -129,5 +129,5 @@ def main():
         print("✅ No test clients found - cleanup may be complete")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

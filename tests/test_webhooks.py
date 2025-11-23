@@ -10,13 +10,14 @@ Tests verify:
 """
 
 import pytest
-from jobber.webhooks import (
-    validate_signature,
-    parse_event,
-    QUOTE_APPROVED,
-    INVOICE_PAID,
-)
+
 from jobber.exceptions import JobberException
+from jobber.webhooks import (
+    INVOICE_PAID,
+    QUOTE_APPROVED,
+    parse_event,
+    validate_signature,
+)
 
 
 class TestSignatureValidation:
@@ -32,8 +33,8 @@ class TestSignatureValidation:
         signature = "sha256=8e3c0d7f9c7b1e4a8f5d6c3b2a1e9d8c7f6e5d4c3b2a1e9d8c7f6e5d4c3b2a1e"
 
         # For this test, we'll compute the signature dynamically
-        import hmac
         import hashlib
+        import hmac
 
         expected_digest = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
         signature = f"sha256={expected_digest}"
@@ -55,8 +56,8 @@ class TestSignatureValidation:
         wrong_secret = "wrong_secret"
 
         # Compute signature with correct secret
-        import hmac
         import hashlib
+        import hmac
 
         digest = hmac.new(correct_secret.encode(), payload, hashlib.sha256).hexdigest()
         signature = f"sha256={digest}"
@@ -71,8 +72,8 @@ class TestSignatureValidation:
         secret = "my_webhook_secret"
 
         # Compute signature for original payload
-        import hmac
         import hashlib
+        import hmac
 
         digest = hmac.new(secret.encode(), original_payload, hashlib.sha256).hexdigest()
         signature = f"sha256={digest}"
@@ -103,8 +104,8 @@ class TestSignatureValidation:
         secret = "my_webhook_secret"
 
         # Compute lowercase digest
-        import hmac
         import hashlib
+        import hmac
 
         lowercase_digest = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
         uppercase_digest = lowercase_digest.upper()
@@ -121,7 +122,9 @@ class TestEventParsing:
 
     def test_valid_json_payload(self):
         """Valid JSON payload should be parsed successfully."""
-        payload = b'{"event_type": "quote.approved", "data": {"id": "123", "client": {"name": "John"}}}'
+        payload = (
+            b'{"event_type": "quote.approved", "data": {"id": "123", "client": {"name": "John"}}}'
+        )
         event = parse_event(payload)
 
         assert event["event_type"] == "quote.approved"
@@ -161,7 +164,7 @@ class TestEventParsing:
 
     def test_unicode_payload(self):
         """Payload with Unicode characters should be parsed correctly."""
-        payload = '{"client": {"name": "José García"}}'.encode("utf-8")
+        payload = '{"client": {"name": "José García"}}'.encode()
         event = parse_event(payload)
 
         assert event["client"]["name"] == "José García"
@@ -182,26 +185,26 @@ class TestEventConstants:
         """All event type constants should be unique."""
         from jobber.webhooks import (
             CLIENT_CREATE,
-            CLIENT_UPDATE,
             CLIENT_DELETE,
-            QUOTE_CREATE,
-            QUOTE_UPDATE,
-            QUOTE_APPROVED,
-            QUOTE_CONVERTED,
-            VISIT_CREATE,
-            VISIT_UPDATE,
-            VISIT_COMPLETE,
-            VISIT_DELETE,
+            CLIENT_UPDATE,
             INVOICE_CREATE,
-            INVOICE_UPDATE,
             INVOICE_PAID,
             INVOICE_SENT,
+            INVOICE_UPDATE,
+            JOB_COMPLETE,
             JOB_CREATE,
             JOB_UPDATE,
-            JOB_COMPLETE,
+            QUOTE_APPROVED,
+            QUOTE_CONVERTED,
+            QUOTE_CREATE,
+            QUOTE_UPDATE,
+            REQUEST_APPROVED,
             REQUEST_CREATE,
             REQUEST_UPDATE,
-            REQUEST_APPROVED,
+            VISIT_COMPLETE,
+            VISIT_CREATE,
+            VISIT_DELETE,
+            VISIT_UPDATE,
         )
 
         all_events = [

@@ -33,12 +33,7 @@ CALLBACK_PORT = 3000
 CALLBACK_TIMEOUT = 300  # 5 minutes
 
 # Callback state
-callback_data = {
-    'code': None,
-    'error': None,
-    'state': None,
-    'received': False
-}
+callback_data = {"code": None, "error": None, "state": None, "received": False}
 
 
 class CustomCallbackHandler(BaseHTTPRequestHandler):
@@ -95,38 +90,37 @@ class CustomCallbackHandler(BaseHTTPRequestHandler):
         print(f"[Callback] Query params: {list(query.keys())}")
 
         # Success path
-        if 'code' in query:
-            callback_data['code'] = query['code'][0]
-            callback_data['state'] = query.get('state', [None])[0]
-            callback_data['received'] = True
+        if "code" in query:
+            callback_data["code"] = query["code"][0]
+            callback_data["state"] = query.get("state", [None])[0]
+            callback_data["received"] = True
 
             print(f"[Callback] ✓ Authorization code received")
             print(f"[Callback]   Code: {callback_data['code'][:20]}...")
-            if callback_data['state']:
+            if callback_data["state"]:
                 print(f"[Callback]   State: {callback_data['state'][:20]}...")
 
             self.send_response(200)
-            self.send_header('Content-type', 'text/html')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(self.SUCCESS_HTML.encode())
 
         # Error path
-        elif 'error' in query:
-            callback_data['error'] = query['error'][0]
-            error_desc = query.get('error_description', ['Unknown error'])[0]
-            callback_data['received'] = True
+        elif "error" in query:
+            callback_data["error"] = query["error"][0]
+            error_desc = query.get("error_description", ["Unknown error"])[0]
+            callback_data["received"] = True
 
             print(f"[Callback] ✗ Authorization error")
             print(f"[Callback]   Error: {callback_data['error']}")
             print(f"[Callback]   Description: {error_desc}")
 
             html = self.ERROR_HTML_TEMPLATE.format(
-                error=callback_data['error'],
-                description=error_desc
+                error=callback_data["error"], description=error_desc
             )
 
             self.send_response(400)
-            self.send_header('Content-type', 'text/html')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(html.encode())
 
@@ -143,6 +137,7 @@ class CustomCallbackHandler(BaseHTTPRequestHandler):
 
 def wait_for_callback_with_timeout(server, timeout):
     """Wait for callback with timeout."""
+
     def server_thread():
         server.handle_request()
 
@@ -155,7 +150,7 @@ def wait_for_callback_with_timeout(server, timeout):
         server.server_close()
         return False
 
-    return callback_data['received']
+    return callback_data["received"]
 
 
 def main():
@@ -163,16 +158,16 @@ def main():
 
     # Generate PKCE + state
     print("1. Generating security parameters...")
-    verifier = base64.urlsafe_b64encode(os.urandom(40)).decode().rstrip('=')
+    verifier = base64.urlsafe_b64encode(os.urandom(40)).decode().rstrip("=")
     challenge_bytes = hashlib.sha256(verifier.encode()).digest()
-    challenge = base64.urlsafe_b64encode(challenge_bytes).decode().rstrip('=')
-    state = base64.urlsafe_b64encode(os.urandom(32)).decode().rstrip('=')
+    challenge = base64.urlsafe_b64encode(challenge_bytes).decode().rstrip("=")
+    state = base64.urlsafe_b64encode(os.urandom(32)).decode().rstrip("=")
     print(f"   PKCE challenge: {challenge[:20]}...")
     print(f"   State: {state[:20]}...")
 
     # Start server
     print("\n2. Starting callback server with timeout...")
-    server = HTTPServer(('127.0.0.1', CALLBACK_PORT), CustomCallbackHandler)
+    server = HTTPServer(("127.0.0.1", CALLBACK_PORT), CustomCallbackHandler)
     redirect_uri = f"http://localhost:{CALLBACK_PORT}/callback"
     print(f"   Listening on {redirect_uri}")
     print(f"   Timeout: {CALLBACK_TIMEOUT} seconds")
@@ -184,8 +179,8 @@ def main():
         AUTH_URL,
         redirect_uri=redirect_uri,
         code_challenge=challenge,
-        code_challenge_method='S256',
-        state=state  # CSRF protection
+        code_challenge_method="S256",
+        state=state,  # CSRF protection
     )
 
     # Open browser
@@ -199,18 +194,18 @@ def main():
     server.server_close()
 
     # Validate state (CSRF protection)
-    if received and callback_data['code']:
+    if received and callback_data["code"]:
         print("\n6. Validating state parameter...")
         # Note: oauthlib handles state validation automatically
         # This is manual demonstration
-        if callback_data['state'] == state:
+        if callback_data["state"] == state:
             print("   ✓ State matches (CSRF protection passed)")
             print(f"\n✓ Success! Authorization code: {callback_data['code'][:20]}...")
             return 0
         else:
             print("   ✗ State mismatch (potential CSRF attack)")
             return 1
-    elif received and callback_data['error']:
+    elif received and callback_data["error"]:
         print(f"\n✗ Authorization failed: {callback_data['error']}")
         return 1
     else:
@@ -218,5 +213,5 @@ def main():
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

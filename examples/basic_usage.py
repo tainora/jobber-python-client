@@ -35,7 +35,8 @@ def main():
 
     # Query 2: Get clients with pagination
     print("\nQuerying clients...")
-    result = client.execute_query("""
+    result = client.execute_query(
+        """
         query GetClients($first: Int!) {
             clients(first: $first) {
                 nodes {
@@ -52,17 +53,19 @@ def main():
                 }
             }
         }
-    """, variables={'first': 5})
+    """,
+        variables={"first": 5},
+    )
 
-    clients = result['clients']
+    clients = result["clients"]
     print(f"Total clients: {clients['totalCount']}")
     print(f"Retrieved: {len(clients['nodes'])} clients")
 
-    for client_data in clients['nodes']:
+    for client_data in clients["nodes"]:
         name = f"{client_data['firstName']} {client_data['lastName']}"
-        company = client_data.get('companyName', 'N/A')
+        company = client_data.get("companyName", "N/A")
         # Include clickable web link for visual confirmation
-        web_link = clickable_link(client_data['jobberWebUri'], "🔗 View")
+        web_link = clickable_link(client_data["jobberWebUri"], "🔗 View")
         print(f"  - {name} ({company}) - {web_link}")
 
     # Query 3: Check rate limit status
@@ -74,7 +77,7 @@ def main():
         print(f"  Restore rate: {throttle['restoreRate']} points/second")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except JobberException as e:

@@ -33,6 +33,7 @@ Analysis of complete lead-to-payment workflow revealed three high-priority gaps:
 ### Business Impact
 
 **Current state**:
+
 - Lead Capture: 100% autonomous
 - Quoting: 95% autonomous
 - Job Scheduling: 80% autonomous
@@ -42,6 +43,7 @@ Analysis of complete lead-to-payment workflow revealed three high-priority gaps:
 - Follow-up: 95% autonomous
 
 **Target state (with enhancements)**:
+
 - Work Completion: 90% autonomous (photo workaround implemented)
 - Event latency: 5 minutes → real-time (webhooks)
 - Query accuracy: Improved via schema introspection
@@ -63,6 +65,7 @@ Implement three enhancements as separate, composable modules:
 **Purpose**: Enable real-time event-driven automation instead of polling.
 
 **Implementation**:
+
 - HMAC-SHA256 signature validation (prevent spoofed events)
 - Event parser (JSON → Python dataclasses)
 - Example webhook handler (Flask/FastAPI)
@@ -76,6 +79,7 @@ Implement three enhancements as separate, composable modules:
 **Purpose**: Unblock roof cleaning before/after photo requirements.
 
 **Implementation**:
+
 - S3 presigned URL generation (boto3)
 - `attach_photos_to_visit(visit_id, photo_urls)` helper (uses `noteCreate`)
 - Mobile upload flow example
@@ -89,6 +93,7 @@ Implement three enhancements as separate, composable modules:
 **Purpose**: Improve AI query construction accuracy via dynamic type validation.
 
 **Implementation**:
+
 - `get_schema()` function (executes `__schema` query)
 - `extract_field_descriptions(type_name)` helper
 - Schema caching (avoid repeated introspection calls)
@@ -123,16 +128,19 @@ Implement three enhancements as separate, composable modules:
 ## Trade-offs
 
 **Webhook Hosting Complexity vs Real-time Automation**:
+
 - Accept: Webhook endpoint requires HTTPS hosting (ngrok for dev, production server for prod)
 - Gain: 5-minute latency → <1 second real-time events
 - Mitigation: Provide deployment guide for common platforms (Heroku, Railway, Fly.io)
 
 **S3 Setup Complexity vs Photo Upload**:
+
 - Accept: S3 bucket setup requires AWS knowledge
 - Gain: Unblocks roof cleaning photo requirements (70% → 90% autonomy)
 - Mitigation: Provide setup guide with Terraform/CloudFormation templates
 
 **Schema Caching Staleness vs Rate Limit Impact**:
+
 - Accept: Cached schema may be stale if Jobber updates API
 - Gain: Avoid rate limit impact from repeated introspection calls
 - Mitigation: Schema diff utility detects changes, alerts on breaking changes
@@ -157,6 +165,7 @@ examples/
 ### Error Handling
 
 All modules follow fail-fast principle:
+
 - `webhooks.py`: Raise `SignatureValidationError` on invalid HMAC
 - `photos.py`: Raise `S3UploadError` on presigned URL generation failure
 - `introspection.py`: Raise `GraphQLError` on introspection query failure
@@ -171,6 +180,7 @@ All modules follow fail-fast principle:
 ### Dependency Management
 
 Add to `pyproject.toml`:
+
 ```toml
 dependencies = [
     "requests>=2.32.0",
@@ -190,11 +200,13 @@ dev = [
 ### Webhook Security
 
 Jobber webhooks include HMAC-SHA256 signature in `X-Jobber-Signature` header:
+
 ```
 X-Jobber-Signature: sha256=<hex_digest>
 ```
 
 Validation algorithm:
+
 ```python
 import hmac
 import hashlib
@@ -211,6 +223,7 @@ def validate_signature(payload: bytes, signature: str, secret: str) -> bool:
 ### S3 Security
 
 Presigned URLs expire after 1 hour (configurable):
+
 ```python
 import boto3
 
@@ -225,6 +238,7 @@ url = s3_client.generate_presigned_url(
 ### Schema Caching Strategy
 
 Cache schema to disk to avoid repeated introspection:
+
 ```python
 import json
 from pathlib import Path

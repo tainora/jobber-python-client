@@ -2,10 +2,13 @@
 """
 List existing Jobber clients with their clickable URLs.
 """
+
 import sys
-sys.path.insert(0, '/Users/terryli/own/jobber')
+
+sys.path.insert(0, "/Users/terryli/own/jobber")
 
 from jobber import JobberClient
+
 
 def main():
     print("=== Fetching Existing Jobber Clients ===\n")
@@ -32,7 +35,7 @@ def main():
         print("Fetching your existing clients...\n")
         result = client.execute_query(query)
 
-        clients = result['clients']['nodes']
+        clients = result["clients"]["nodes"]
 
         if not clients:
             print("❌ No clients found in your Jobber account.")
@@ -48,7 +51,7 @@ def main():
 
         for i, client_data in enumerate(clients, 1):
             name = f"{client_data.get('firstName', '')} {client_data.get('lastName', '')}"
-            company = client_data.get('companyName', '')
+            company = client_data.get("companyName", "")
 
             print(f"{i}. {name.strip()}")
             if company:
@@ -68,8 +71,10 @@ def main():
         print("\nMake sure you've authenticated first:")
         print("  uv run jobber_auth.py")
         import traceback
+
         traceback.print_exc()
         return 1
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     exit(main())

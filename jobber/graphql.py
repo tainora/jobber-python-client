@@ -44,10 +44,7 @@ class GraphQLExecutor:
         self.last_throttle_status: dict[str, int] | None = None
 
     def execute(
-        self,
-        query: str,
-        variables: dict[str, Any] | None = None,
-        operation_name: str | None = None
+        self, query: str, variables: dict[str, Any] | None = None, operation_name: str | None = None
     ) -> dict[str, Any]:
         """
         Execute GraphQL query.
@@ -67,30 +64,24 @@ class GraphQLExecutor:
             AuthenticationError: Token invalid (401)
         """
         headers = {
-            'Authorization': f'Bearer {self.access_token}',
-            'Content-Type': 'application/json',
-            'X-JOBBER-GRAPHQL-VERSION': self.API_VERSION
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json",
+            "X-JOBBER-GRAPHQL-VERSION": self.API_VERSION,
         }
 
-        payload: dict[str, Any] = {'query': query}
+        payload: dict[str, Any] = {"query": query}
         if variables:
-            payload['variables'] = variables
+            payload["variables"] = variables
         if operation_name:
-            payload['operationName'] = operation_name
+            payload["operationName"] = operation_name
 
         try:
-            response = requests.post(
-                self.API_URL,
-                json=payload,
-                headers=headers,
-                timeout=30
-            )
+            response = requests.post(self.API_URL, json=payload, headers=headers, timeout=30)
 
             # Check for authentication errors
             if response.status_code == 401:
                 raise AuthenticationError(
-                    "Access token invalid or expired",
-                    context={'status_code': 401}
+                    "Access token invalid or expired", context={"status_code": 401}
                 )
 
             # Check for other HTTP errors
@@ -98,18 +89,14 @@ class GraphQLExecutor:
 
         except requests.Timeout as e:
             raise NetworkError(
-                "Request timeout after 30 seconds",
-                context={'url': self.API_URL}
+                "Request timeout after 30 seconds", context={"url": self.API_URL}
             ) from e
         except requests.ConnectionError as e:
-            raise NetworkError(
-                f"Connection failed: {e}",
-                context={'url': self.API_URL}
-            ) from e
+            raise NetworkError(f"Connection failed: {e}", context={"url": self.API_URL}) from e
         except requests.HTTPError as e:
             raise NetworkError(
                 f"HTTP {response.status_code}: {response.text}",
-                context={'status_code': response.status_code, 'response': response.text}
+                context={"status_code": response.status_code, "response": response.text},
             ) from e
 
         # Parse JSON response
@@ -117,36 +104,35 @@ class GraphQLExecutor:
             result = response.json()
         except ValueError as e:
             raise NetworkError(
-                f"Invalid JSON response: {response.text}",
-                context={'response': response.text}
+                f"Invalid JSON response: {response.text}", context={"response": response.text}
             ) from e
 
         # Extract rate limit info
-        if 'extensions' in result and 'cost' in result['extensions']:
-            cost = result['extensions']['cost']
-            if 'throttleStatus' in cost:
-                self.last_throttle_status = cost['throttleStatus']
+        if "extensions" in result and "cost" in result["extensions"]:
+            cost = result["extensions"]["cost"]
+            if "throttleStatus" in cost:
+                self.last_throttle_status = cost["throttleStatus"]
                 self._check_rate_limit(self.last_throttle_status)
 
         # Check for GraphQL errors
-        if 'errors' in result:
+        if "errors" in result:
             raise GraphQLError(
                 f"GraphQL query failed: {result['errors'][0].get('message', 'Unknown error')}",
-                errors=result['errors'],
+                errors=result["errors"],
                 query=query,
-                context={'variables': variables}
+                context={"variables": variables},
             )
 
         # Return data
-        if 'data' not in result:
+        if "data" not in result:
             raise GraphQLError(
                 "Response missing 'data' field",
                 errors=[],
                 query=query,
-                context={'response': result}
+                context={"response": result},
             )
 
-        return cast(dict[str, Any], result['data'])
+        return cast(dict[str, Any], result["data"])
 
     def get_throttle_status(self) -> dict[str, int] | None:
         """
@@ -172,18 +158,18 @@ class GraphQLExecutor:
         Raises:
             RateLimitError: Available points < threshold
         """
-        currently_available = throttle.get('currentlyAvailable', 0)
-        maximum_available = throttle.get('maximumAvailable', 10000)
+        currently_available = throttle.get("currentlyAvailable", 0)
+        maximum_available = throttle.get("maximumAvailable", 10000)
 
         threshold = self.RATE_LIMIT_THRESHOLD * maximum_available
 
         if currently_available < threshold:
-            restore_rate = throttle.get('restoreRate', 500)
+            restore_rate = throttle.get("restoreRate", 500)
             wait_seconds = (threshold - currently_available) / restore_rate
 
             raise RateLimitError(
                 f"Rate limit low: {currently_available}/{maximum_available} points available. "
                 f"Wait {wait_seconds:.1f}s for points to restore.",
                 throttle_status=throttle,
-                context={'wait_seconds': wait_seconds, 'threshold_pct': self.RATE_LIMIT_THRESHOLD}
+                context={"wait_seconds": wait_seconds, "threshold_pct": self.RATE_LIMIT_THRESHOLD},
             )

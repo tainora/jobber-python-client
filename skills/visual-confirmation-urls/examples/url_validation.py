@@ -42,9 +42,9 @@ def main() -> int:
     print(f"Validating client ID: {example_id}\n")
 
     try:
-        result = client.execute_query(query, variables={'id': example_id})
+        result = client.execute_query(query, variables={"id": example_id})
 
-        if result['client'] and result['client']['jobberWebUri']:
+        if result["client"] and result["client"]["jobberWebUri"]:
             print("✅ Validation passed:")
             print(f"   Resource exists: {result['client']['firstName']}")
             print(f"   Web URL present: {result['client']['jobberWebUri']}")
@@ -59,5 +59,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

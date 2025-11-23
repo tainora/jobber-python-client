@@ -24,14 +24,12 @@ from graphql_executor_template import (
     NetworkError,
     AuthenticationError,
     GraphQLError,
-    RateLimitError
+    RateLimitError,
 )
 
 
 def execute_with_comprehensive_error_handling(
-    executor: GraphQLExecutor,
-    query: str,
-    variables: dict | None = None
+    executor: GraphQLExecutor, query: str, variables: dict | None = None
 ) -> dict:
     """Execute query with comprehensive error handling."""
     try:
@@ -62,7 +60,7 @@ def execute_with_comprehensive_error_handling(
     except RateLimitError as e:
         # Rate limit exceeded
         print(f"⚠️  Rate limit hit: {e.message}")
-        wait_seconds = e.context['wait_seconds']
+        wait_seconds = e.context["wait_seconds"]
         print(f"   Waiting {wait_seconds:.1f}s for points to restore...")
 
         time.sleep(wait_seconds)
@@ -79,7 +77,7 @@ def main() -> int:
     executor = GraphQLExecutor(
         access_token="your_access_token",
         api_url="https://api.example.com/graphql",
-        rate_limit_threshold=0.20
+        rate_limit_threshold=0.20,
     )
 
     # Example 1: Successful query
@@ -97,7 +95,7 @@ def main() -> int:
 
     try:
         result = execute_with_comprehensive_error_handling(executor, query)
-        users = result['users']['nodes']
+        users = result["users"]["nodes"]
         print(f"✅ Success! Fetched {len(users)} users\n")
     except Exception as e:
         print(f"Failed: {e}\n")
@@ -128,10 +126,10 @@ def main() -> int:
             # Check throttle status
             throttle = executor.get_throttle_status()
             if throttle:
-                available = throttle['currentlyAvailable']
-                maximum = throttle['maximumAvailable']
+                available = throttle["currentlyAvailable"]
+                maximum = throttle["maximumAvailable"]
                 pct = available / maximum * 100
-                print(f"Query {i+1}: Rate limit: {available}/{maximum} ({pct:.1f}%)")
+                print(f"Query {i + 1}: Rate limit: {available}/{maximum} ({pct:.1f}%)")
 
     except RateLimitError as e:
         print(f"Rate limit exceeded: {e.message}")
@@ -140,5 +138,5 @@ def main() -> int:
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

@@ -49,6 +49,7 @@ DOPPLER_CONFIG = "dev"
 
 class AuthorizationError(Exception):
     """OAuth authorization failed"""
+
     pass
 
 
@@ -64,12 +65,12 @@ class OAuthCallbackHandler(BaseHTTPRequestHandler):
         query = parse_qs(urlparse(self.path).query)
 
         # Store values at class level for retrieval after server shuts down
-        if 'code' in query:
-            OAuthCallbackHandler.authorization_code = query['code'][0]
-            OAuthCallbackHandler.state = query.get('state', [None])[0]
+        if "code" in query:
+            OAuthCallbackHandler.authorization_code = query["code"][0]
+            OAuthCallbackHandler.state = query.get("state", [None])[0]
 
             self.send_response(200)
-            self.send_header('Content-type', 'text/html')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(b"""
                 <html><body>
@@ -78,19 +79,21 @@ class OAuthCallbackHandler(BaseHTTPRequestHandler):
                 <script>window.close();</script>
                 </body></html>
             """)
-        elif 'error' in query:
-            OAuthCallbackHandler.error = query['error'][0]
-            error_desc = query.get('error_description', ['Unknown error'])[0]
+        elif "error" in query:
+            OAuthCallbackHandler.error = query["error"][0]
+            error_desc = query.get("error_description", ["Unknown error"])[0]
 
             self.send_response(400)
-            self.send_header('Content-type', 'text/html')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
-            self.wfile.write(f"""
+            self.wfile.write(
+                f"""
                 <html><body>
                 <h1>Authorization Failed</h1>
                 <p>Error: {error_desc}</p>
                 </body></html>
-            """.encode())
+            """.encode()
+            )
         else:
             self.send_response(400)
             self.end_headers()
@@ -111,11 +114,11 @@ def generate_pkce_pair() -> Tuple[str, str]:
         No exceptions (uses os.urandom which is always available)
     """
     # Generate code_verifier (43-128 characters, URL-safe)
-    code_verifier = base64.urlsafe_b64encode(os.urandom(40)).decode('utf-8').rstrip('=')
+    code_verifier = base64.urlsafe_b64encode(os.urandom(40)).decode("utf-8").rstrip("=")
 
     # Generate code_challenge (SHA256 hash of verifier)
-    challenge_bytes = hashlib.sha256(code_verifier.encode('utf-8')).digest()
-    code_challenge = base64.urlsafe_b64encode(challenge_bytes).decode('utf-8').rstrip('=')
+    challenge_bytes = hashlib.sha256(code_verifier.encode("utf-8")).digest()
+    code_challenge = base64.urlsafe_b64encode(challenge_bytes).decode("utf-8").rstrip("=")
 
     return code_verifier, code_challenge
 
@@ -132,13 +135,13 @@ def find_available_port() -> Tuple[HTTPServer, int]:
     """
     for port in PORT_RANGE:
         try:
-            server = HTTPServer(('127.0.0.1', port), OAuthCallbackHandler)
+            server = HTTPServer(("127.0.0.1", port), OAuthCallbackHandler)
             return server, port
         except OSError:
             continue
 
     raise RuntimeError(
-        f"No available ports in range {PORT_RANGE.start}-{PORT_RANGE.stop-1}. "
+        f"No available ports in range {PORT_RANGE.start}-{PORT_RANGE.stop - 1}. "
         f"Close applications using these ports or specify different range."
     )
 
@@ -156,19 +159,24 @@ def load_client_credentials() -> Tuple[str, str]:
     try:
         result = subprocess.run(
             [
-                'doppler', 'secrets', 'get',
-                'JOBBER_CLIENT_ID', 'JOBBER_CLIENT_SECRET',
-                '--project', DOPPLER_PROJECT,
-                '--config', DOPPLER_CONFIG,
-                '--plain'
+                "doppler",
+                "secrets",
+                "get",
+                "JOBBER_CLIENT_ID",
+                "JOBBER_CLIENT_SECRET",
+                "--project",
+                DOPPLER_PROJECT,
+                "--config",
+                DOPPLER_CONFIG,
+                "--plain",
             ],
             capture_output=True,
             text=True,
             check=True,
-            timeout=10
+            timeout=10,
         )
 
-        lines = result.stdout.strip().split('\n')
+        lines = result.stdout.strip().split("\n")
         if len(lines) != 2:
             raise RuntimeError(
                 f"Expected 2 lines from Doppler, got {len(lines)}. "
@@ -187,11 +195,7 @@ def load_client_credentials() -> Tuple[str, str]:
 
 
 def exchange_code_for_token(
-    code: str,
-    code_verifier: str,
-    client_id: str,
-    client_secret: str,
-    redirect_uri: str
+    code: str, code_verifier: str, client_id: str, client_secret: str, redirect_uri: str
 ) -> dict:
     """
     Exchange authorization code for access/refresh tokens.
@@ -212,15 +216,15 @@ def exchange_code_for_token(
     response = requests.post(
         JOBBER_TOKEN_URL,
         data={
-            'grant_type': 'authorization_code',
-            'code': code,
-            'redirect_uri': redirect_uri,
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'code_verifier': code_verifier,
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": redirect_uri,
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "code_verifier": code_verifier,
         },
-        headers={'Accept': 'application/json'},
-        timeout=30
+        headers={"Accept": "application/json"},
+        timeout=30,
     )
     response.raise_for_status()
     return response.json()
@@ -241,30 +245,33 @@ def save_tokens_to_doppler(access_token: str, refresh_token: str, expires_in: in
     expires_at = int(time.time()) + expires_in
 
     secrets = {
-        'JOBBER_ACCESS_TOKEN': access_token,
-        'JOBBER_REFRESH_TOKEN': refresh_token,
-        'JOBBER_TOKEN_EXPIRES_AT': str(expires_at)
+        "JOBBER_ACCESS_TOKEN": access_token,
+        "JOBBER_REFRESH_TOKEN": refresh_token,
+        "JOBBER_TOKEN_EXPIRES_AT": str(expires_at),
     }
 
     for name, value in secrets.items():
         try:
             subprocess.run(
                 [
-                    'doppler', 'secrets', 'set', name,
-                    '--project', DOPPLER_PROJECT,
-                    '--config', DOPPLER_CONFIG,
-                    '--silent'
+                    "doppler",
+                    "secrets",
+                    "set",
+                    name,
+                    "--project",
+                    DOPPLER_PROJECT,
+                    "--config",
+                    DOPPLER_CONFIG,
+                    "--silent",
                 ],
                 input=value,
                 text=True,
                 check=True,
                 capture_output=True,
-                timeout=10
+                timeout=10,
             )
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(
-                f"Failed to save {name} to Doppler: {e.stderr}"
-            ) from e
+            raise RuntimeError(f"Failed to save {name} to Doppler: {e.stderr}") from e
 
 
 def main() -> int:
@@ -299,7 +306,7 @@ def main() -> int:
             JOBBER_AUTH_URL,
             redirect_uri=redirect_uri,
             code_challenge=code_challenge,
-            code_challenge_method='S256'
+            code_challenge_method="S256",
         )
 
         # Open browser
@@ -314,9 +321,7 @@ def main() -> int:
 
         # Check for errors
         if OAuthCallbackHandler.error:
-            raise AuthorizationError(
-                f"Authorization failed: {OAuthCallbackHandler.error}"
-            )
+            raise AuthorizationError(f"Authorization failed: {OAuthCallbackHandler.error}")
 
         if not OAuthCallbackHandler.authorization_code:
             raise AuthorizationError("No authorization code received in callback")
@@ -330,16 +335,16 @@ def main() -> int:
             code_verifier,
             client_id,
             client_secret,
-            redirect_uri
+            redirect_uri,
         )
         print("✓ Received access and refresh tokens")
 
         # Save to Doppler
         print("Saving tokens to Doppler...")
         save_tokens_to_doppler(
-            token_data['access_token'],
-            token_data['refresh_token'],
-            token_data.get('expires_in', 3600)  # Default to 1 hour if not provided
+            token_data["access_token"],
+            token_data["refresh_token"],
+            token_data.get("expires_in", 3600),  # Default to 1 hour if not provided
         )
         print("✓ Tokens saved to Doppler")
 
@@ -355,5 +360,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

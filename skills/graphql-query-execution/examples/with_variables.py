@@ -22,8 +22,7 @@ def main() -> int:
     print("=== GraphQL Query with Variables ===\n")
 
     executor = GraphQLExecutor(
-        access_token="your_access_token",
-        api_url="https://api.example.com/graphql"
+        access_token="your_access_token", api_url="https://api.example.com/graphql"
     )
 
     # Define query with variables
@@ -39,16 +38,14 @@ def main() -> int:
     """
 
     # Variables (type-safe)
-    variables = {
-        'id': '123'
-    }
+    variables = {"id": "123"}
 
     print(f"Executing query with variables: {variables}\n")
 
     try:
         result = executor.execute(query, variables)
 
-        user = result['user']
+        user = result["user"]
 
         print("✅ Query successful!\n")
         print(f"User: {user['name']}")
@@ -62,5 +59,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

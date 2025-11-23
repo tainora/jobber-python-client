@@ -28,15 +28,15 @@ The comprehensive Jobber API AI Readiness Report (completed 2025-11-22) assessed
 
 Analysis of the complete lead-to-payment workflow revealed autonomy gaps:
 
-| Phase            | Current Autonomy | Target Autonomy | Blocker                  |
-| ---------------- | ---------------- | --------------- | ------------------------ |
-| Lead Capture     | 100%             | 100%            | None                     |
-| Quoting          | 95%              | 95%             | Human pricing rules (acceptable) |
-| Job Scheduling   | 80%              | 80%             | Route optimization (deferred) |
-| **Work Completion** | **70%** | **90%** | **Photo upload missing** |
-| Invoicing        | 100%             | 100%            | None                     |
-| Payment          | 100%             | 100%            | None                     |
-| Follow-up        | 95%              | 95%             | Human cadence rules (acceptable) |
+| Phase               | Current Autonomy | Target Autonomy | Blocker                          |
+| ------------------- | ---------------- | --------------- | -------------------------------- |
+| Lead Capture        | 100%             | 100%            | None                             |
+| Quoting             | 95%              | 95%             | Human pricing rules (acceptable) |
+| Job Scheduling      | 80%              | 80%             | Route optimization (deferred)    |
+| **Work Completion** | **70%**          | **90%**         | **Photo upload missing**         |
+| Invoicing           | 100%             | 100%            | None                             |
+| Payment             | 100%             | 100%            | None                             |
+| Follow-up           | 95%              | 95%             | Human cadence rules (acceptable) |
 
 **Three immediate enhancements identified**:
 
@@ -58,6 +58,7 @@ Analysis of the complete lead-to-payment workflow revealed autonomy gaps:
 ### Current State
 
 **Implemented** (v0.1.1):
+
 - ✅ OAuth 2.0 PKCE authentication
 - ✅ GraphQL query execution
 - ✅ Rate limit awareness (`throttleStatus`)
@@ -66,11 +67,13 @@ Analysis of the complete lead-to-payment workflow revealed autonomy gaps:
 - ✅ Fail-fast error handling
 
 **Missing**:
+
 - ❌ Webhook signature validation
 - ❌ S3 photo upload integration
 - ❌ GraphQL schema introspection
 
 **Documentation**:
+
 - ✅ ADR-0001 through ADR-0006
 - ✅ Skills: `oauth-pkce-doppler`, `visual-confirmation-urls`, `graphql-query-execution`
 - ✅ Examples: `basic_usage.py`, `error_handling.py`, `visual_confirmation_urls.py`
@@ -131,6 +134,7 @@ Implementation is complete when:
 ### Phase 1: Webhook Support (2-3 hours)
 
 **Deliverables**:
+
 - `jobber/webhooks.py` - HMAC signature validation, event parsing
 - `examples/webhook_handler.py` - Flask webhook endpoint example
 - `tests/test_webhooks.py` - Unit tests for signature validation
@@ -162,6 +166,7 @@ Implementation is complete when:
    - Document ngrok setup for local development
 
 **Auto-Validation**:
+
 - Run `pytest tests/test_webhooks.py -v`
 - Run example webhook handler locally
 - Test with curl: `curl -X POST -H "X-Jobber-Signature: ..." -d '...' http://localhost:5000/webhook`
@@ -171,6 +176,7 @@ Implementation is complete when:
 ### Phase 2: Photo Upload Integration (3-4 hours)
 
 **Deliverables**:
+
 - `jobber/photos.py` - S3 presigned URL generation, note attachment
 - `examples/photo_upload_workflow.py` - Complete mobile upload flow
 - `tests/test_photos.py` - Unit tests for URL generation
@@ -201,6 +207,7 @@ Implementation is complete when:
    - Provide Terraform/CloudFormation templates for S3 bucket
 
 **Auto-Validation**:
+
 - Run `pytest tests/test_photos.py -v`
 - Run example workflow against live API (requires S3 bucket)
 - Verify photo visible in Jobber visit note
@@ -210,6 +217,7 @@ Implementation is complete when:
 ### Phase 3: Schema Introspection (1-2 hours)
 
 **Deliverables**:
+
 - `jobber/introspection.py` - Schema queries, field descriptions
 - `examples/schema_introspection.py` - AI context usage example
 - `tests/test_introspection.py` - Unit tests for caching
@@ -218,7 +226,7 @@ Implementation is complete when:
 **Implementation Steps**:
 
 1. Create `jobber/introspection.py` module
-   - `INTROSPECTION_QUERY` constant (GraphQL __schema query)
+   - `INTROSPECTION_QUERY` constant (GraphQL \_\_schema query)
    - `get_schema(client, use_cache=True)` function (execute query + cache to disk)
    - `extract_field_descriptions(schema, type_name)` function (parse schema dict)
    - `compare_schemas(old_schema, new_schema)` function (detect breaking changes)
@@ -241,6 +249,7 @@ Implementation is complete when:
    - Document AI usage pattern (validate query before execution)
 
 **Auto-Validation**:
+
 - Run `pytest tests/test_introspection.py -v`
 - Run example against live API (introspect once, use cache second time)
 - Verify cache file created at `~/.cache/jobber/schema.json`
@@ -250,6 +259,7 @@ Implementation is complete when:
 ### Phase 4: Documentation & Examples (2 hours)
 
 **Deliverables**:
+
 - Updated `README.md` - All three features documented
 - Updated `CHANGELOG.md` - v0.2.0 release notes
 - Updated `CLAUDE.md` - Skill references updated
@@ -282,6 +292,7 @@ Implementation is complete when:
    - Bump version to 0.2.0 (semantic-release will do this automatically)
 
 **Auto-Validation**:
+
 - Run `uv sync` to verify dependencies resolve
 - Run `mypy jobber/` to verify type hints
 - Run `ruff check jobber/` to verify code style
@@ -292,6 +303,7 @@ Implementation is complete when:
 ### Phase 5: Testing & Validation (2 hours)
 
 **Deliverables**:
+
 - All unit tests passing
 - All examples validated against live API
 - Validation log: `logs/0007-ai-agent-enhancements-20251122_<timestamp>.log`
@@ -320,6 +332,7 @@ Implementation is complete when:
    - `ruff format jobber/`
 
 **Auto-Validation**:
+
 - All tests pass (pytest exit code 0)
 - All examples run without errors
 - Type checking passes (mypy exit code 0)
@@ -330,6 +343,7 @@ Implementation is complete when:
 ### Phase 6: Release & Publish (1 hour)
 
 **Deliverables**:
+
 - v0.2.0 tag on GitHub
 - v0.2.0 GitHub release with changelog
 - v0.2.0 published to PyPI
@@ -357,6 +371,7 @@ Implementation is complete when:
    - Verify package at https://pypi.org/project/jobber-python-client/0.2.0/
 
 **Auto-Validation**:
+
 - Verify tag created: `git tag -l v0.2.0`
 - Verify GitHub release exists: `gh release view v0.2.0`
 - Verify PyPI package: `pip install jobber-python-client==0.2.0` in fresh venv
@@ -366,6 +381,7 @@ Implementation is complete when:
 ## Task List
 
 ### Phase 1: Webhook Support
+
 - [ ] Create `jobber/webhooks.py` with HMAC validation function
 - [ ] Create `jobber/webhooks.py` with event parsing function
 - [ ] Create `jobber/webhooks.py` with event type constants
@@ -374,6 +390,7 @@ Implementation is complete when:
 - [ ] Update README.md with webhook documentation
 
 ### Phase 2: Photo Upload
+
 - [ ] Create `jobber/photos.py` with presigned URL function
 - [ ] Create `jobber/photos.py` with attach photos function
 - [ ] Create `examples/photo_upload_workflow.py` complete flow
@@ -381,6 +398,7 @@ Implementation is complete when:
 - [ ] Update README.md with S3 setup guide
 
 ### Phase 3: Schema Introspection
+
 - [ ] Create `jobber/introspection.py` with introspection query
 - [ ] Create `jobber/introspection.py` with caching logic
 - [ ] Create `jobber/introspection.py` with field description extraction
@@ -389,12 +407,14 @@ Implementation is complete when:
 - [ ] Update README.md with introspection documentation
 
 ### Phase 4: Documentation
+
 - [ ] Update README.md with all three features
 - [ ] Update CHANGELOG.md with v0.2.0 notes
 - [ ] Update CLAUDE.md with skill references
 - [ ] Update pyproject.toml with boto3 dependency
 
 ### Phase 5: Testing
+
 - [ ] Run pytest on all modules (achieve 100% pass)
 - [ ] Validate webhook_handler.py against curl test
 - [ ] Validate photo_upload_workflow.py against live API + S3
@@ -405,6 +425,7 @@ Implementation is complete when:
 - [ ] Create validation log file
 
 ### Phase 6: Release
+
 - [ ] Commit changes with conventional commit messages
 - [ ] Run semantic-release skill (tag v0.2.0)
 - [ ] Verify GitHub release created
@@ -420,6 +441,7 @@ Implementation is complete when:
 **Issue**: Webhooks require HTTPS endpoint accessible by Jobber. Local development requires ngrok, production requires hosting.
 
 **Mitigation**:
+
 - Provide ngrok setup guide for local development
 - Provide deployment guides for common platforms (Heroku, Railway, Fly.io)
 - Document webhook URL configuration in Jobber Developer Portal
@@ -433,6 +455,7 @@ Implementation is complete when:
 **Issue**: S3 bucket setup requires AWS account, CORS configuration, IAM permissions.
 
 **Mitigation**:
+
 - Provide step-by-step S3 setup guide
 - Provide Terraform template for one-command setup
 - Provide CloudFormation template as alternative
@@ -446,6 +469,7 @@ Implementation is complete when:
 **Issue**: Jobber may update GraphQL schema without notice, breaking existing queries.
 
 **Mitigation**:
+
 - Implement schema diff utility to detect changes
 - Cache schema with timestamp, alert if >30 days old
 - Recommend periodic schema refresh (weekly)
@@ -459,6 +483,7 @@ Implementation is complete when:
 **Issue**: Adding boto3 may conflict with existing dependencies.
 
 **Mitigation**:
+
 - Use version ranges in pyproject.toml (e.g., `boto3>=1.35.0`)
 - Test dependency resolution with `uv sync`
 - Pin versions if conflicts arise
@@ -472,21 +497,25 @@ Implementation is complete when:
 Following global SLO standards (availability, correctness, observability, maintainability):
 
 ### Availability
+
 - **Target**: 98% uptime for webhook endpoint
 - **Measurement**: Webhook endpoint responds to health checks
 - **Rationale**: Webhooks are critical path for real-time automation
 
 ### Correctness
+
 - **Target**: 100% signature validation accuracy
 - **Measurement**: No false positives (valid events rejected) or false negatives (invalid events accepted)
 - **Rationale**: Spoofed webhook events could trigger incorrect business logic
 
 ### Observability
+
 - **Target**: All webhook events logged with context (event type, timestamp, payload size)
 - **Measurement**: Log entries include structured data for debugging
 - **Rationale**: Debugging webhook issues requires visibility into event flow
 
 ### Maintainability
+
 - **Target**: <200 LOC per module (webhooks.py, photos.py, introspection.py)
 - **Measurement**: Count lines with `wc -l jobber/*.py`
 - **Rationale**: Small modules are easier to understand, test, and modify
@@ -496,15 +525,18 @@ Following global SLO standards (availability, correctness, observability, mainta
 ## Dependencies
 
 ### Python Libraries
+
 - `boto3>=1.35.0` - S3 presigned URL generation (new dependency)
 - `flask>=3.0.0` - Webhook example endpoint (optional dev dependency)
 - Existing: `requests>=2.32.0`, `oauthlib>=3.2.2`
 
 ### External Services
+
 - **AWS S3**: Bucket for photo storage (~$0.05/month for 1000 photos)
 - **Webhook Endpoint**: HTTPS server to receive Jobber events (ngrok for dev, hosting for prod)
 
 ### Jobber Configuration
+
 - **Webhook URL**: Configured in Jobber Developer Portal
 - **Webhook Secret**: Stored in Doppler (`JOBBER_WEBHOOK_SECRET`)
 - **S3 Credentials**: Stored in Doppler (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME`)
@@ -514,6 +546,7 @@ Following global SLO standards (availability, correctness, observability, mainta
 ## Progress Log
 
 ### 2025-11-22 14:00 - Plan Created
+
 - Created ADR-0007 (MADR format)
 - Created plan-0007 (Google Design Doc format)
 - Created initial todo list (10 items)

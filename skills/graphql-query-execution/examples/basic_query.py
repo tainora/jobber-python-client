@@ -23,8 +23,7 @@ def main() -> int:
 
     # Initialize executor
     executor = GraphQLExecutor(
-        access_token="your_access_token",
-        api_url="https://api.example.com/graphql"
+        access_token="your_access_token", api_url="https://api.example.com/graphql"
     )
 
     # Define query
@@ -46,7 +45,7 @@ def main() -> int:
         result = executor.execute(query)
 
         # Extract users
-        users = result['users']['nodes']
+        users = result["users"]["nodes"]
 
         print(f"✅ Query successful! Found {len(users)} users:\n")
 
@@ -60,5 +59,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

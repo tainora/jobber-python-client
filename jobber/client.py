@@ -42,10 +42,8 @@ class JobberClient:
 
     @classmethod
     def from_doppler(
-        cls,
-        doppler_project: str = "claude-config",
-        doppler_config: str = "dev"
-    ) -> 'JobberClient':
+        cls, doppler_project: str = "claude-config", doppler_config: str = "dev"
+    ) -> "JobberClient":
         """
         Create client loading credentials from Doppler.
 
@@ -68,10 +66,7 @@ class JobberClient:
         return cls(token_manager)
 
     def execute_query(
-        self,
-        query: str,
-        variables: dict[str, Any] | None = None,
-        operation_name: str | None = None
+        self, query: str, variables: dict[str, Any] | None = None, operation_name: str | None = None
     ) -> dict[str, Any]:
         """
         Execute GraphQL query.

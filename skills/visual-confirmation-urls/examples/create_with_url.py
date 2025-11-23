@@ -43,22 +43,16 @@ def main() -> int:
         }
     """
 
-    variables = {
-        'input': {
-            'firstName': 'John',
-            'lastName': 'Doe',
-            'companyName': 'Doe Industries'
-        }
-    }
+    variables = {"input": {"firstName": "John", "lastName": "Doe", "companyName": "Doe Industries"}}
 
     result = client.execute_query(mutation, variables)
 
-    if result['clientCreate']['userErrors']:
-        errors = result['clientCreate']['userErrors']
+    if result["clientCreate"]["userErrors"]:
+        errors = result["clientCreate"]["userErrors"]
         print(f"❌ Failed to create client: {errors}")
         return 1
 
-    created = result['clientCreate']['client']
+    created = result["clientCreate"]["client"]
 
     # Visual feedback with clickable link
     print(f"✅ Client created successfully!")
@@ -70,5 +64,5 @@ def main() -> int:
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

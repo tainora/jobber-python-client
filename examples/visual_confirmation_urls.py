@@ -51,29 +51,23 @@ def example_create_client_with_url() -> None:
         }
     """
 
-    variables = {
-        'input': {
-            'firstName': 'John',
-            'lastName': 'Doe',
-            'companyName': 'Doe Industries'
-        }
-    }
+    variables = {"input": {"firstName": "John", "lastName": "Doe", "companyName": "Doe Industries"}}
 
     result = client.execute_query(mutation, variables)
 
-    if result['clientCreate']['userErrors']:
-        errors = result['clientCreate']['userErrors']
+    if result["clientCreate"]["userErrors"]:
+        errors = result["clientCreate"]["userErrors"]
         print(f"❌ Failed to create client: {errors}")
         return
 
-    created = result['clientCreate']['client']
+    created = result["clientCreate"]["client"]
 
     # Visual feedback with clickable link
-    print(f"✅ Client created successfully!")
+    print("✅ Client created successfully!")
     print(f"   ID: {created['id']}")
     print(f"   Name: {created['firstName']} {created['lastName']}")
     print(f"   🔗 View in Jobber: {created['jobberWebUri']}")
-    print(f"\n   👆 Click to verify in web interface")
+    print("\n   👆 Click to verify in web interface")
 
 
 def example_query_clients_with_urls() -> None:
@@ -103,7 +97,7 @@ def example_query_clients_with_urls() -> None:
     result = client.execute_query(query)
 
     print("Recent clients:\n")
-    for client_data in result['clients']['nodes']:
+    for client_data in result["clients"]["nodes"]:
         print(f"• {client_data['firstName']} {client_data['lastName']}")
         print(f"  🔗 {client_data['jobberWebUri']}\n")
 
@@ -118,29 +112,12 @@ def example_create_quote_with_preview_url() -> None:
     """
     print("\n=== Create Quote with Dual URLs ===\n")
 
-    client = JobberClient.from_doppler("claude-config", "dev")
-
     # NOTE: This requires a valid client ID and job ID
     # Replace with actual IDs from your Jobber account
-    mutation = """
-        mutation CreateQuote($input: QuoteCreate!) {
-            quoteCreate(input: $input) {
-                quote {
-                    id
-                    quoteNumber
-                    jobberWebUri  # <-- Internal web UI link
-                    previewUrl    # <-- Client Hub preview link
-                }
-                userErrors {
-                    message
-                }
-            }
-        }
-    """
-
-    # Example - would need real client/job IDs
     print("⚠️  Quote creation requires valid client and job IDs")
     print("    Pattern shown - adapt with your IDs\n")
+    print("Example setup:")
+    print("    client = JobberClient.from_doppler('claude-config', 'dev')\n")
     print("Mutation fields to include:")
     print("  • jobberWebUri  → View in your Jobber account")
     print("  • previewUrl    → Share with client for approval")
@@ -171,13 +148,13 @@ def example_url_based_validation() -> None:
     example_id = "gid://jobber/Client/123456"
 
     try:
-        result = client.execute_query(query, variables={'id': example_id})
+        result = client.execute_query(query, variables={"id": example_id})
 
-        if result['client'] and result['client']['jobberWebUri']:
+        if result["client"] and result["client"]["jobberWebUri"]:
             print("✅ Validation passed:")
             print(f"   Resource exists: {result['client']['firstName']}")
             print(f"   Web URL present: {result['client']['jobberWebUri']}")
-            print(f"   Status: CONFIRMED")
+            print("   Status: CONFIRMED")
         else:
             print("❌ Validation failed: No web URL returned")
 
@@ -280,5 +257,5 @@ def main() -> None:
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

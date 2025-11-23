@@ -13,9 +13,7 @@ from typing import Any
 
 
 def format_success(
-    resource_type: str,
-    resource_data: dict[str, Any],
-    name_field: str = "name"
+    resource_type: str, resource_data: dict[str, Any], name_field: str = "name"
 ) -> str:
     """
     Format success message with web link for visual confirmation.
@@ -42,17 +40,17 @@ def format_success(
         raise TypeError(f"resource_data must be dict, got {type(resource_data).__name__}")
 
     # Validate required fields (fail-fast)
-    if 'id' not in resource_data:
+    if "id" not in resource_data:
         raise KeyError("resource_data missing required field: 'id'")
 
-    if 'jobberWebUri' not in resource_data:
+    if "jobberWebUri" not in resource_data:
         raise KeyError(
-            f"resource_data missing required field: 'jobberWebUri'. "
-            f"Include this field in your GraphQL query for visual confirmation."
+            "resource_data missing required field: 'jobberWebUri'. "
+            "Include this field in your GraphQL query for visual confirmation."
         )
 
     # Get display name (fallback to ID if name field missing)
-    display_name = resource_data.get(name_field, resource_data['id'])
+    display_name = resource_data.get(name_field, resource_data["id"])
 
     return (
         f"✅ {resource_type} created: {display_name}\n"

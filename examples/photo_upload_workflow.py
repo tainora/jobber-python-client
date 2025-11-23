@@ -48,15 +48,15 @@ Usage:
 # ]
 # ///
 
-import io
 import time
 from datetime import datetime
 
 import requests
+
 from jobber import JobberClient
 from jobber.photos import (
-    generate_presigned_upload_url,
     attach_photos_to_visit,
+    generate_presigned_upload_url,
     get_s3_credentials_from_doppler,
 )
 
@@ -75,12 +75,10 @@ def simulate_mobile_photo_upload(
     Returns:
         True if upload succeeded
     """
-    response = requests.put(
-        presigned_url, data=photo_data, headers={"Content-Type": content_type}
-    )
+    response = requests.put(presigned_url, data=photo_data, headers={"Content-Type": content_type})
 
     if response.status_code == 200:
-        print(f"✅ Photo uploaded successfully to S3")
+        print("✅ Photo uploaded successfully to S3")
         return True
     else:
         print(f"❌ Photo upload failed: {response.status_code}")
@@ -124,7 +122,7 @@ def main():
 
         print(f"   ✅ Before photo URL: {before_url[:80]}...")
         print(f"   ✅ After photo URL: {after_url[:80]}...")
-        print(f"   ⏱️  URLs expire in 1 hour")
+        print("   ⏱️  URLs expire in 1 hour")
     except Exception as e:
         print(f"   ❌ Failed to generate presigned URLs: {e}")
         return
@@ -216,8 +214,8 @@ def main():
             note_title="Roof Cleaning - Before/After Photos",
         )
 
-        print(f"   ✅ Photos attached to visit via note")
-        print(f"   📝 Note created with 2 photo links")
+        print("   ✅ Photos attached to visit via note")
+        print("   📝 Note created with 2 photo links")
 
     except Exception as e:
         print(f"   ❌ Failed to attach photos: {e}")
@@ -228,7 +226,7 @@ def main():
     # Step 7: Visual verification
     print("Step 7: Visual verification")
     print(f"   🌐 View visit in Jobber: {visit_web_uri}")
-    print(f"   👉 Click link to see photos in note")
+    print("   👉 Click link to see photos in note")
 
     print()
     print("=" * 70)
@@ -236,8 +234,8 @@ def main():
     print("=" * 70)
     print()
     print("Summary:")
-    print(f"  - Generated 2 presigned URLs")
-    print(f"  - Uploaded 2 photos to S3")
+    print("  - Generated 2 presigned URLs")
+    print("  - Uploaded 2 photos to S3")
     print(f"  - Attached photos to visit {visit_id}")
     print(f"  - Photos visible in Jobber at: {visit_web_uri}")
     print()

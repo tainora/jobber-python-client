@@ -9,12 +9,12 @@ Usage:
 """
 
 from jobber import (
-    JobberClient,
     AuthenticationError,
-    RateLimitError,
-    GraphQLError,
-    NetworkError,
     ConfigurationError,
+    GraphQLError,
+    JobberClient,
+    NetworkError,
+    RateLimitError,
 )
 from jobber.url_helpers import validate_url
 
@@ -42,9 +42,9 @@ def handle_query_with_errors(client: JobberClient, query: str):
     except RateLimitError as e:
         print(f"Rate limit error: {e}")
         if e.throttle_status:
-            available = e.throttle_status.get('currentlyAvailable', 0)
-            restore_rate = e.throttle_status.get('restoreRate', 500)
-            wait_seconds = e.context.get('wait_seconds', 0)
+            available = e.throttle_status.get("currentlyAvailable", 0)
+            restore_rate = e.throttle_status.get("restoreRate", 500)
+            wait_seconds = e.context.get("wait_seconds", 0)
             print(f"  Available points: {available}")
             print(f"  Restore rate: {restore_rate} points/second")
             print(f"  Suggested wait: {wait_seconds:.1f} seconds")
@@ -115,22 +115,22 @@ def main():
             }
             """
 
-            variables = {'first': 50}
+            variables = {"first": 50}
             if cursor:
-                variables['after'] = cursor
+                variables["after"] = cursor
 
             result = handle_query_with_errors(client, query)
             if not result:
                 print("✗ Error fetching page, stopping pagination")
                 break
 
-            clients = result['clients']
+            clients = result["clients"]
             page_num += 1
-            total_fetched += len(clients['nodes'])
+            total_fetched += len(clients["nodes"])
 
             # Show URLs for visual verification (first 3 clients on each page)
             urls_sample = []
-            for client_data in clients['nodes'][:3]:
+            for client_data in clients["nodes"][:3]:
                 try:
                     url = validate_url(client_data)
                     urls_sample.append(url)
@@ -142,10 +142,10 @@ def main():
                 print(f"  Sample URLs for verification: {urls_sample[0][:50]}...")
 
             # Check for more pages
-            if not clients['pageInfo']['hasNextPage']:
+            if not clients["pageInfo"]["hasNextPage"]:
                 break
 
-            cursor = clients['pageInfo']['endCursor']
+            cursor = clients["pageInfo"]["endCursor"]
 
         print(f"✓ Total fetched: {total_fetched} clients over {page_num} pages")
 
@@ -153,5 +153,5 @@ def main():
         print(f"✗ Cannot create client: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

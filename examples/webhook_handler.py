@@ -40,14 +40,16 @@ Production deployment:
 
 import os
 import subprocess
-from flask import Flask, request, jsonify
+
+from flask import Flask, jsonify, request
+
 from jobber.webhooks import (
-    validate_signature,
-    parse_event,
-    QUOTE_APPROVED,
-    INVOICE_PAID,
-    VISIT_COMPLETE,
     CLIENT_CREATE,
+    INVOICE_PAID,
+    QUOTE_APPROVED,
+    VISIT_COMPLETE,
+    parse_event,
+    validate_signature,
 )
 
 app = Flask(__name__)
@@ -96,7 +98,7 @@ def webhook():
         print(f"❌ Signature validation error: {e}")
         return jsonify({"error": str(e)}), 400
 
-    print(f"✅ Webhook signature validated")
+    print("✅ Webhook signature validated")
 
     # Parse event
     try:
@@ -139,7 +141,7 @@ def handle_quote_approved(data: dict) -> None:
 
     print(f"✅ Quote approved: {quote_id}")
     print(f"   Client: {client_name}")
-    print(f"   Next steps: Create visit, send confirmation email")
+    print("   Next steps: Create visit, send confirmation email")
 
     # TODO: Implement business logic
     # - Create visit via GraphQL mutation
@@ -164,7 +166,7 @@ def handle_invoice_paid(data: dict) -> None:
     print(f"💰 Invoice paid: {invoice_id}")
     print(f"   Client: {client_name}")
     print(f"   Amount: ${amount}")
-    print(f"   Next steps: Update accounting, send thank-you email")
+    print("   Next steps: Update accounting, send thank-you email")
 
     # TODO: Implement business logic
     # - Update QuickBooks/Xero
@@ -186,7 +188,7 @@ def handle_visit_complete(data: dict) -> None:
 
     print(f"🏁 Visit completed: {visit_id}")
     print(f"   Client: {client_name}")
-    print(f"   Next steps: Create invoice, send to client")
+    print("   Next steps: Create invoice, send to client")
 
     # TODO: Implement business logic
     # - Create invoice via GraphQL mutation
@@ -209,7 +211,7 @@ def handle_client_create(data: dict) -> None:
     print(f"👤 New client created: {client_id}")
     print(f"   Name: {client_name}")
     print(f"   Email: {email}")
-    print(f"   Next steps: Send welcome email, add to CRM")
+    print("   Next steps: Send welcome email, add to CRM")
 
     # TODO: Implement business logic
     # - Send welcome email

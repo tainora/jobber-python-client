@@ -21,11 +21,11 @@ Usage:
 
 from jobber import JobberClient
 from jobber.introspection import (
-    get_schema,
-    extract_field_descriptions,
-    compare_schemas,
-    clear_schema_cache,
     CACHE_FILE,
+    clear_schema_cache,
+    compare_schemas,
+    extract_field_descriptions,
+    get_schema,
 )
 
 
@@ -46,9 +46,9 @@ def main():
         schema = get_schema(client, use_cache=True)
 
         if CACHE_FILE.exists():
-            print(f"   ✅ Schema loaded from cache")
+            print("   ✅ Schema loaded from cache")
         else:
-            print(f"   ✅ Schema fetched from API and cached")
+            print("   ✅ Schema fetched from API and cached")
 
         types_count = len(schema["__schema"]["types"])
         print(f"   📊 Total types in schema: {types_count}")
@@ -131,12 +131,14 @@ def main():
         # Compare cached vs fresh (in real use, compare old cache vs new fetch)
         changes = compare_schemas(schema, fresh_schema)
 
-        if any([
-            changes["added_types"],
-            changes["removed_types"],
-            changes["added_fields"],
-            changes["removed_fields"],
-        ]):
+        if any(
+            [
+                changes["added_types"],
+                changes["removed_types"],
+                changes["added_fields"],
+                changes["removed_fields"],
+            ]
+        ):
             print("   ⚠️  Schema changes detected!")
 
             if changes["removed_types"]:
@@ -179,7 +181,7 @@ def main():
     print()
     print("Summary:")
     print(f"  - Schema contains {types_count} types")
-    print(f"  - Field descriptions available for AI context")
+    print("  - Field descriptions available for AI context")
     print(f"  - Cache location: {CACHE_FILE}")
     print(f"  - Cache provides {uncached_time / cached_time:.1f}x speedup")
     print()
