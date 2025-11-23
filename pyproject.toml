@@ -61,5 +61,6 @@ disallow_untyped_defs = true
 
 [dependency-groups]
 dev = [
+    "pytest-cov>=7.0.0",
     "types-requests>=2.32.4.20250913",
 ]

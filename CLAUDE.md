@@ -27,10 +27,10 @@ Production-ready Python client for Jobber GraphQL API with OAuth 2.0 PKCE authen
 
 **Project Stats**:
 
-- Core library: 867 LOC (4 modules)
-- Examples: 2 (basic usage, error handling)
-- Tests: Unit tests with pytest
-- Documentation: MADR + plan.yaml + README
+- Core library: 1,701 LOC (9 modules, 384 executable statements)
+- Examples: 6 (usage, error handling, visual URLs, photos, introspection, webhooks)
+- Tests: 129 unit tests (98% code coverage, 100% module coverage)
+- Documentation: MADR + Google Design Docs + README + Skills
 
 ## Quick Start
 
@@ -350,9 +350,10 @@ uv run --with . examples/basic_usage.py
 
 **Validation results** (all passing):
 
-- ✅ Tests: 7/7 passed ([tests/test_exceptions.py](tests/test_exceptions.py))
-- ✅ Ruff: No errors (40 auto-fixed)
-- ✅ Mypy: No errors (type stubs installed, annotations added)
+- ✅ Tests: 129/129 passed (98% code coverage, 100% module coverage)
+- ✅ Ruff: 0 errors (formatting applied to all files)
+- ✅ Mypy: 0 errors (strict mode, type stubs installed)
+- ✅ Coverage: 384 statements, 9 missing (auth timer logic, client bug)
 
 **Code quality configuration**:
 
