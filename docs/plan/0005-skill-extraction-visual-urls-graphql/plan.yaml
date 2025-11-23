@@ -1,0 +1,449 @@
+openapi: 3.1.0
+info:
+  title: Skill Extraction Implementation Plan - Visual URLs & GraphQL
+  version: 1.0.0
+  description: |-
+    Extract two validated workflow patterns as atomic project-local skills:
+    1. Visual Confirmation URLs (jobberWebUri pattern)
+    2. GraphQL Query Execution (error handling, pagination, rate limiting)
+
+    Strategy: Copy/move existing validated content from docs/, jobber/, examples/
+    to minimize token usage and preserve production-tested implementations.
+  x-adr-id: "0005"
+  x-adr-link: "../../decisions/0005-skill-extraction-visual-urls-graphql.md"
+  x-project: jobber-python-client
+  x-created: "2025-01-17"
+
+paths: {}  # Not an API spec, using OpenAPI for structured plan
+
+components:
+  schemas:
+    ImplementationPlan:
+      type: object
+      properties:
+        phases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phase'
+        slos:
+          $ref: '#/components/schemas/SLOs'
+        validation:
+          $ref: '#/components/schemas/Validation'
+
+    Phase:
+      type: object
+      required: [name, duration, deliverables]
+      properties:
+        name:
+          type: string
+        duration:
+          type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+
+    SLOs:
+      type: object
+      properties:
+        availability:
+          type: object
+        correctness:
+          type: object
+        observability:
+          type: object
+        maintainability:
+          type: object
+
+    Validation:
+      type: object
+      properties:
+        criteria:
+          type: array
+          items:
+            type: string
+
+# Implementation Plan Details
+x-plan:
+  phases:
+    - name: "Phase 1: Architecture & Planning"
+      duration: "15 minutes"
+      status: "completed"
+      deliverables:
+        - "ADR-0005: Skill extraction decision document"
+        - "plan.yaml: This implementation plan"
+      tasks:
+        - Create ADR documenting skill extraction rationale
+        - Document alternatives considered (keep as docs, extract all 6, consolidate, global)
+        - Create plan.yaml with x-adr-id sync
+        - Document skill structure requirements (YAML frontmatter, progressive disclosure)
+      dependencies: []
+      validation:
+        - ADR-0005 follows MADR format
+        - plan.yaml has x-adr-id: "0005"
+        - Implementation notes documented for both skills
+        - Content sources identified (copy/move strategy)
+
+    - name: "Phase 2: Visual Confirmation URLs - Skill Structure"
+      duration: "10 minutes"
+      deliverables:
+        - "skills/visual-confirmation-urls/ directory structure"
+        - "skills/visual-confirmation-urls/SKILL.md with frontmatter"
+      tasks:
+        - Create skills/visual-confirmation-urls/ directory
+        - Create subdirectories (assets/, references/, examples/)
+        - Create SKILL.md with YAML frontmatter
+        - Add frontmatter (name: visual-confirmation-urls, single-line description <200 chars)
+      dependencies:
+        - Phase 1 complete
+      validation:
+        - Directory structure matches skill-architecture pattern
+        - SKILL.md frontmatter valid (single-line description)
+        - Subdirectories created (assets/, references/, examples/)
+
+    - name: "Phase 3: Visual Confirmation URLs - Content Extraction"
+      duration: "20 minutes"
+      deliverables:
+        - "SKILL.md hub content (overview + quick start)"
+        - "assets/url_helpers_template.py (parameterized)"
+        - "3 reference docs (api-integration, terminal-hyperlinks, use-cases)"
+        - "Examples split by use case"
+      tasks:
+        - Copy SKILL.md overview from docs/visual-confirmation-urls.md (lines 1-100)
+        - Parameterize jobber/url_helpers.py → assets/url_helpers_template.py
+        - Copy API integration section → references/api-integration.md
+        - Copy ANSI codes section → references/terminal-hyperlinks.md
+        - Copy 5 use cases → references/use-cases.md
+        - Split examples/visual_confirmation_urls.py by use case → examples/
+      dependencies:
+        - Phase 2 complete
+      validation:
+        - SKILL.md handles 80% common tasks (progressive disclosure)
+        - Template parameterized (no hardcoded Jobber URLs)
+        - All references linked from SKILL.md
+        - Examples runnable (PEP 723 inline dependencies)
+
+    - name: "Phase 4: GraphQL Query Execution - Skill Structure"
+      duration: "10 minutes"
+      deliverables:
+        - "skills/graphql-query-execution/ directory structure"
+        - "skills/graphql-query-execution/SKILL.md with frontmatter"
+      tasks:
+        - Create skills/graphql-query-execution/ directory
+        - Create subdirectories (assets/, references/, examples/)
+        - Create SKILL.md with YAML frontmatter
+        - Add frontmatter (name: graphql-query-execution, single-line description <200 chars)
+      dependencies:
+        - Phase 3 complete
+      validation:
+        - Directory structure matches skill-architecture pattern
+        - SKILL.md frontmatter valid (single-line description)
+        - Subdirectories created (assets/, references/, examples/)
+
+    - name: "Phase 5: GraphQL Query Execution - Content Extraction"
+      duration: "25 minutes"
+      deliverables:
+        - "SKILL.md hub content (GraphQL pattern overview)"
+        - "assets/graphql_executor_template.py (parameterized)"
+        - "4 reference docs (error-handling, pagination, rate-limiting, query-patterns)"
+        - "Examples extracted from basic_usage.py, error_handling.py"
+      tasks:
+        - Write SKILL.md overview (GraphQL execution pattern synthesis)
+        - Parameterize jobber/graphql.py → assets/graphql_executor_template.py
+        - Extract error parsing logic → references/error-handling.md
+        - Extract pagination pattern → references/pagination.md
+        - Extract throttle logic → references/rate-limiting.md
+        - Extract query construction → references/query-patterns.md
+        - Extract examples from examples/basic_usage.py, error_handling.py → examples/
+      dependencies:
+        - Phase 4 complete
+      validation:
+        - SKILL.md handles 80% common tasks (progressive disclosure)
+        - Template parameterized (API_URL, API_VERSION configurable)
+        - Examples for Shopify, GitHub, Stripe GraphQL endpoints
+        - Rate limiting, error handling generic
+
+    - name: "Phase 6: CLAUDE.md Integration"
+      duration: "15 minutes"
+      deliverables:
+        - "CLAUDE.md updated with 2 skill sections (~60 lines)"
+      tasks:
+        - Add Visual Confirmation URLs section after line 211
+        - Add GraphQL Query Execution section after Visual URLs
+        - Follow template (Skill → Pattern → Implementation → Components → Documentation → Examples)
+        - Maintain 30-40% link density (consistent with oauth-pkce-doppler)
+        - No content duplication (links only, minimal prose)
+      dependencies:
+        - Phase 5 complete
+      validation:
+        - 2 new sections added to "Skills & Patterns"
+        - Link density 30-40%
+        - No content duplication (hub-and-spoke pattern)
+        - All links resolve (relative paths checked)
+
+    - name: "Phase 7: Validation & Documentation"
+      duration: "10 minutes"
+      deliverables:
+        - "Skill validation reports (official validator)"
+        - "Updated CHANGELOG.md"
+        - "Updated catalog-info.yaml"
+      tasks:
+        - Run official validator on visual-confirmation-urls skill
+        - Run official validator on graphql-query-execution skill
+        - Fix any validation errors (YAML frontmatter, links, structure)
+        - Update CHANGELOG.md with skill extraction feature
+        - Update catalog-info.yaml with skill references
+      dependencies:
+        - Phase 6 complete
+      validation:
+        - Both skills pass official validator
+        - YAML frontmatter valid (single-line descriptions)
+        - All links resolve
+        - CHANGELOG updated with ADR-0005
+        - catalog-info.yaml includes skill metadata
+
+  slos:
+    availability:
+      target: "99.9% - Skills optional, core library unaffected"
+      metrics:
+        - "Skills are additive (no breaking changes)"
+        - "Core library functions independently"
+        - "Progressive disclosure (load references only when needed)"
+      validation:
+        - No changes to jobber/ or examples/ source files
+        - Skills directory can be deleted without breaking core
+        - SKILL.md loads without references/ for 80% tasks
+
+    correctness:
+      target: "100% - Content from production-validated code"
+      metrics:
+        - "Templates extracted from working code (url_helpers.py, graphql.py)"
+        - "Examples extracted from production examples"
+        - "Unit tests validate url_helpers (19 tests, 100% pass)"
+      validation:
+        - Templates preserve error handling (TypeError, KeyError, ValueError)
+        - Examples use actual working code
+        - No new code introduced (copy/move only)
+
+    observability:
+      target: "Clear errors, troubleshooting documented"
+      metrics:
+        - "Templates preserve fail-fast error messages"
+        - "References document troubleshooting"
+        - "Examples demonstrate debugging approaches"
+      validation:
+        - Error messages in templates match original
+        - Troubleshooting sections in references/
+        - Examples include error handling patterns
+
+    maintainability:
+      target: "Single source of truth, progressive disclosure"
+      metrics:
+        - "SKILL.md handles 80% tasks (hub pattern)"
+        - "references/ for deep dives (spoke pattern)"
+        - "Clear boundaries (skill vs core library)"
+      validation:
+        - No content duplication between SKILL.md and references/
+        - SKILL.md <500 words, references/ unlimited
+        - Skills link back to ADRs (single source of truth for decisions)
+
+  validation:
+    criteria:
+      - "ADR-0005 and plan.yaml created and synchronized (x-adr-id)"
+      - "2 skill directories created with proper structure"
+      - "11 files for visual-confirmation-urls (SKILL.md, 3 assets, 5 references, 4 examples)"
+      - "12 files for graphql-query-execution (SKILL.md, 3 assets, 5 references, 4 examples)"
+      - "CLAUDE.md updated with 2 skill sections (~60 lines)"
+      - "Both skills pass official validator"
+      - "All templates parameterized (no hardcoded Jobber values)"
+      - "CHANGELOG.md updated with skill extraction"
+
+    verification:
+      - method: "ADR-plan sync check"
+        command: "grep 'x-adr-id.*0005' docs/plan/0005-skill-extraction-visual-urls-graphql/plan.yaml"
+        expected: "x-adr-id: '0005' present"
+
+      - method: "Skill directories exist"
+        command: "test -d skills/visual-confirmation-urls && test -d skills/graphql-query-execution && echo 'exists'"
+        expected: "exists"
+
+      - method: "SKILL.md frontmatter validation"
+        command: "head -10 skills/visual-confirmation-urls/SKILL.md | grep -q '^description:' && echo 'valid'"
+        expected: "valid (single-line description)"
+
+      - method: "Official validator - Visual URLs"
+        command: "/Users/terryli/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/quick_validate.py skills/visual-confirmation-urls/"
+        expected: "All checks pass"
+
+      - method: "Official validator - GraphQL"
+        command: "/Users/terryli/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/quick_validate.py skills/graphql-query-execution/"
+        expected: "All checks pass"
+
+      - method: "CLAUDE.md link farm check"
+        command: "grep -c 'visual-confirmation-urls\\|graphql-query-execution' CLAUDE.md"
+        expected: "Multiple references (link farm added)"
+
+  effort:
+    total: "105 minutes (~1.75 hours)"
+    breakdown:
+      - phase: "Architecture & Planning"
+        duration: "15 minutes"
+        status: "completed"
+      - phase: "Visual URLs - Structure"
+        duration: "10 minutes"
+        status: "pending"
+      - phase: "Visual URLs - Content"
+        duration: "20 minutes"
+        status: "pending"
+      - phase: "GraphQL - Structure"
+        duration: "10 minutes"
+        status: "pending"
+      - phase: "GraphQL - Content"
+        duration: "25 minutes"
+        status: "pending"
+      - phase: "CLAUDE.md Integration"
+        duration: "15 minutes"
+        status: "pending"
+      - phase: "Validation & Documentation"
+        duration: "10 minutes"
+        status: "pending"
+
+  dependencies:
+    external:
+      - name: "skill-creator validator"
+        purpose: "Official skill validation"
+        location: "/Users/terryli/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/quick_validate.py"
+        required: true
+
+    internal:
+      - name: "docs/visual-confirmation-urls.md"
+        purpose: "Source content for visual-confirmation-urls skill"
+        location: "/Users/terryli/own/jobber/docs/visual-confirmation-urls.md"
+        size: "495 lines"
+
+      - name: "jobber/url_helpers.py"
+        purpose: "Template source for url_helpers_template.py"
+        location: "/Users/terryli/own/jobber/jobber/url_helpers.py"
+        size: "156 LOC"
+
+      - name: "jobber/graphql.py"
+        purpose: "Template source for graphql_executor_template.py"
+        location: "/Users/terryli/own/jobber/jobber/graphql.py"
+        size: "189 LOC"
+
+      - name: "examples/visual_confirmation_urls.py"
+        purpose: "Example source (split by use case)"
+        location: "/Users/terryli/own/jobber/examples/visual_confirmation_urls.py"
+        size: "147 LOC"
+
+      - name: "examples/basic_usage.py"
+        purpose: "GraphQL example source"
+        location: "/Users/terryli/own/jobber/examples/basic_usage.py"
+
+      - name: "examples/error_handling.py"
+        purpose: "GraphQL pagination/error example source"
+        location: "/Users/terryli/own/jobber/examples/error_handling.py"
+
+      - name: "ADR-0001"
+        purpose: "Fail-fast error handling principle"
+        location: "/Users/terryli/own/jobber/docs/decisions/0001-jobber-api-client-architecture.md"
+
+      - name: "ADR-0003"
+        purpose: "Visual confirmation URL pattern"
+        location: "/Users/terryli/own/jobber/docs/decisions/0003-visual-confirmation-urls.md"
+
+  success_criteria:
+    - "Both skills atomic and single-purpose"
+    - "Progressive disclosure effective (SKILL.md handles 80% tasks)"
+    - "Hub-and-spoke pattern followed (CLAUDE.md → SKILL.md → references/)"
+    - "Templates parameterized for API-agnostic usage"
+    - "Examples runnable with PEP 723 inline dependencies"
+    - "Official validator passes for both skills"
+    - "No content duplication (copy/move strategy)"
+    - "YAML frontmatter valid (single-line descriptions <200 chars)"
+    - "All links resolve (relative paths correct)"
+
+  impact:
+    availability:
+      - "Skills optional (core library unaffected)"
+      - "No breaking changes to existing code"
+      - "Progressive disclosure (minimal load for common tasks)"
+
+    correctness:
+      - "Content from production-validated code"
+      - "Unit tests validate url_helpers (19 tests)"
+      - "Working examples demonstrate patterns"
+      - "Fail-fast error handling preserved"
+
+    observability:
+      - "Clear error messages in templates"
+      - "Troubleshooting documented in references/"
+      - "Examples demonstrate debugging"
+
+    maintainability:
+      - "Single source of truth per pattern (skill)"
+      - "Clear boundaries (skill vs core library)"
+      - "Progressive disclosure reduces cognitive load"
+      - "Hub-and-spoke navigation (CLAUDE.md → skills → references)"
+      - "Version controlled with project (semantic-release)"
+
+  content_extraction_strategy:
+    visual_urls:
+      SKILL.md:
+        source: "docs/visual-confirmation-urls.md (lines 1-100)"
+        sections:
+          - "Overview and problem statement"
+          - "Quick start (format_success example)"
+          - "Navigation to references/"
+
+      assets:
+        - file: "url_helpers_template.py"
+          source: "jobber/url_helpers.py"
+          changes:
+            - "Remove Jobber-specific field names"
+            - "Add configuration examples (Stripe, GitHub, Linear)"
+            - "Preserve fail-fast error handling"
+
+      references:
+        - file: "api-integration.md"
+          source: "docs/visual-confirmation-urls.md (API coverage section)"
+        - file: "terminal-hyperlinks.md"
+          source: "docs/visual-confirmation-urls.md (ANSI OSC 8 section)"
+        - file: "use-cases.md"
+          source: "docs/visual-confirmation-urls.md (5 use cases)"
+
+      examples:
+        source: "examples/visual_confirmation_urls.py"
+        split_by: "Use case (5 separate example files)"
+
+    graphql_execution:
+      SKILL.md:
+        source: "New synthesis (GraphQL pattern overview)"
+        sections:
+          - "GraphQL execution workflow"
+          - "Quick start (basic query example)"
+          - "Navigation to references/"
+
+      assets:
+        - file: "graphql_executor_template.py"
+          source: "jobber/graphql.py (GraphQLExecutor class)"
+          changes:
+            - "Replace API_URL, API_VERSION with config parameters"
+            - "Add examples for Shopify, GitHub, Stripe endpoints"
+            - "Keep rate limiting, error handling generic"
+
+      references:
+        - file: "error-handling.md"
+          source: "jobber/graphql.py (error parsing logic)"
+        - file: "pagination.md"
+          source: "examples/error_handling.py (pagination pattern)"
+        - file: "rate-limiting.md"
+          source: "jobber/graphql.py (throttle logic)"
+        - file: "query-patterns.md"
+          source: "examples/ (query construction examples)"
+
+      examples:
+        sources:
+          - "examples/basic_usage.py"
+          - "examples/error_handling.py"
+        split_by: "Pattern (basic query, pagination, error handling)"

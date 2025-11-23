@@ -1,0 +1,212 @@
+info:
+  title: Jobber API Python Client
+  version: 0.1.0
+  description: Minimal GraphQL client for Jobber API with OAuth 2.0 support
+  x-adr-id: "0001"
+  x-adr-link: ../../decisions/0001-jobber-api-client-architecture.md
+  contact:
+    name: Terry Li
+    email: usalchemist@gmail.com
+
+components:
+  authentication:
+    type: oauth2
+    flow: authorizationCode
+    authorizationUrl: https://api.getjobber.com/api/oauth/authorize
+    tokenUrl: https://api.getjobber.com/api/oauth/token
+    scopes:
+      - clients:read
+      - clients:write
+      - jobs:read
+      - jobs:write
+
+  secrets:
+    manager: doppler
+    project: claude-config
+    config: dev
+    keys:
+      - JOBBER_CLIENT_ID
+      - JOBBER_CLIENT_SECRET
+      - JOBBER_ACCESS_TOKEN
+      - JOBBER_REFRESH_TOKEN
+      - JOBBER_TOKEN_EXPIRES_AT
+
+implementation:
+  phases:
+    - id: oauth-script
+      name: OAuth Authorization Script
+      duration: 30min
+      deliverables:
+        - path: jobber_auth.py
+          type: executable
+          purpose: One-time OAuth flow handler
+      tasks:
+        - Generate PKCE code_verifier and code_challenge
+        - Start temporary HTTP server (ports 3000-3010)
+        - Open browser to authorization URL
+        - Receive callback with authorization code
+        - Exchange code for access + refresh tokens
+        - Store tokens in Doppler
+        - Validate: tokens saved and retrievable
+      dependencies: []
+
+    - id: core-library
+      name: Core GraphQL Client
+      duration: 2h
+      deliverables:
+        - path: jobber/__init__.py
+          type: module
+          exports: [JobberClient, JobberException]
+        - path: jobber/client.py
+          type: class
+          exports: [JobberClient]
+        - path: jobber/auth.py
+          type: class
+          exports: [TokenManager]
+        - path: jobber/graphql.py
+          type: function
+          exports: [execute_query]
+        - path: jobber/exceptions.py
+          type: module
+          exports: [JobberException, AuthenticationError, RateLimitError, GraphQLError]
+      tasks:
+        - Implement TokenManager with Doppler integration
+        - Implement GraphQLExecutor with rate limit parsing
+        - Implement JobberClient facade
+        - Define exception hierarchy
+        - Add type hints and docstrings
+        - Validate: can execute query and parse response
+      dependencies: [oauth-script]
+
+    - id: documentation
+      name: Documentation and Examples
+      duration: 1h
+      deliverables:
+        - path: README.md
+          type: documentation
+        - path: examples/basic_usage.py
+          type: example
+        - path: examples/error_handling.py
+          type: example
+      tasks:
+        - Write README with quick start
+        - Create basic usage example
+        - Create error handling example
+        - Document exception types
+        - Validate: examples execute successfully
+      dependencies: [core-library]
+
+    - id: semantic-release
+      name: Semantic Release Setup
+      duration: 30min
+      deliverables:
+        - path: .releaserc.json
+          type: configuration
+        - path: .github/workflows/release.yml
+          type: ci-cd
+      tasks:
+        - Configure semantic-release
+        - Set up GitHub Actions workflow
+        - Configure conventional commits
+        - Validate: dry-run succeeds
+      dependencies: [documentation]
+
+slos:
+  availability:
+    target: 99.9%
+    measurement: Successful API calls / Total API calls
+    failure_modes:
+      - Doppler CLI unavailable
+      - Network timeout to Jobber API
+      - Token refresh fails
+
+  correctness:
+    target: 100%
+    measurement: Valid responses / Total responses
+    validation:
+      - Pydantic model validation
+      - GraphQL error detection
+      - HTTP status code checking
+
+  observability:
+    target: All errors logged
+    measurement: Exceptions with full context
+    requirements:
+      - Stack trace includes library calls
+      - Exception message describes failure
+      - Exception context includes request details
+
+  maintainability:
+    target: < 500 LOC core library
+    measurement: Lines of code excluding tests
+    requirements:
+      - No circular dependencies
+      - Type hints on all public APIs
+      - Docstrings on all public functions
+
+dependencies:
+  runtime:
+    - name: requests
+      version: ">=2.32.0"
+      purpose: HTTP client
+    - name: oauthlib
+      version: ">=3.2.2"
+      purpose: PKCE generation
+
+  optional:
+    - name: pydantic
+      version: ">=2.10.0"
+      purpose: Response validation
+
+  development:
+    - name: pytest
+      version: ">=8.0.0"
+      purpose: Testing
+    - name: mypy
+      version: ">=1.14.0"
+      purpose: Type checking
+    - name: semantic-release
+      version: ">=9.0.0"
+      purpose: Automated releases
+
+validation:
+  pre-commit:
+    - type: lint
+      tool: ruff
+    - type: typecheck
+      tool: mypy
+
+  pre-release:
+    - type: test
+      command: pytest -v
+    - type: integration
+      command: uv run examples/basic_usage.py
+    - type: oauth-flow
+      command: uv run jobber_auth.py --validate
+
+timeline:
+  start: 2025-11-17
+  phases:
+    oauth-script: 0.5h
+    core-library: 2.0h
+    documentation: 1.0h
+    semantic-release: 0.5h
+  total: 4.0h
+  buffer: 1.0h
+
+risks:
+  - risk: Doppler CLI not available on user machine
+    mitigation: Document installation requirement
+    severity: high
+
+  - risk: OAuth callback port conflicts
+    mitigation: Try ports 3000-3010 sequentially
+    severity: medium
+
+  - risk: Token refresh fails during long operation
+    mitigation: Raise exception, document retry pattern
+    severity: medium
+
+  - risk: Rate limit exceeded unexpectedly
+    mitigation: Expose throttle status, raise before hitting limit
+    severity: low

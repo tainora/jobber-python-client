@@ -1,0 +1,96 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: jobber-python-client
+  description: Minimal Python client for Jobber GraphQL API with OAuth 2.0 support
+  annotations:
+    github.com/project-slug: terryli/jobber-python-client
+    backstage.io/adr-location: docs/decisions/
+  tags:
+    - python
+    - graphql
+    - oauth2
+    - jobber
+    - api-client
+    - tested
+  links:
+    - url: https://developer.getjobber.com/docs/
+      title: Jobber API Documentation
+      icon: docs
+    - url: docs/plan/0001-jobber-api-client/plan.yaml
+      title: Implementation Plan
+      icon: dashboard
+spec:
+  type: library
+  lifecycle: experimental
+  owner: terry-li
+  system: automation
+  dependsOn:
+    - resource:doppler-secrets-manager
+  providesApis:
+    - jobber-graphql-client-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: jobber-graphql-client-api
+  description: Python API for interacting with Jobber GraphQL
+spec:
+  type: library
+  lifecycle: experimental
+  owner: terry-li
+  definition: |
+    # Jobber Python Client API
+
+    ## JobberClient
+
+    Main client for executing GraphQL queries against Jobber API.
+
+    ### Methods
+
+    - `from_doppler(project, config)` → JobberClient
+      Load credentials from Doppler secrets manager
+
+    - `execute_query(query, variables)` → dict
+      Execute GraphQL query, returns response data
+      Raises: AuthenticationError, RateLimitError, GraphQLError
+
+    - `get_throttle_status()` → ThrottleStatus
+      Get current rate limit status
+
+    ## URL Helpers
+
+    - `format_success(resource_type, resource_data, name_field)` → str
+      Format success message with web link
+
+    - `clickable_link(url, text)` → str
+      Create ANSI terminal hyperlink (OSC 8)
+
+    - `validate_url(resource_data, field)` → str
+      Validate jobberWebUri field presence
+
+    ## Exceptions
+
+    - `JobberException`: Base exception
+    - `AuthenticationError`: OAuth token invalid/expired
+    - `RateLimitError`: Rate limit threshold exceeded
+    - `GraphQLError`: Query execution failed
+    - `NetworkError`: HTTP request failed
+
+    ## Testing
+
+    - Unit tests: 19 tests in tests/test_url_helpers.py
+    - Framework: pytest >= 9.0.0
+    - Coverage: url_helpers module (format_success, clickable_link, validate_url)
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: doppler-secrets-manager
+  description: Doppler secrets manager for storing OAuth tokens
+spec:
+  type: secrets-manager
+  owner: terry-li
+  dependsOn: []

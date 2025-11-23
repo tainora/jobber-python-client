@@ -1,0 +1,317 @@
+openapi: 3.1.0
+info:
+  title: URL Helpers Unit Testing Implementation Plan
+  version: 1.0.0
+  description: |
+    Implement pytest-based unit tests for jobber/url_helpers.py to ensure correctness SLO.
+    Tests cover happy path, error cases, edge cases, and ANSI formatting validation.
+  x-adr-id: "0004"
+  x-adr-link: "../../decisions/0004-url-helpers-unit-tests.md"
+  x-project: jobber-python-client
+  x-created: "2025-01-17"
+
+paths: {}  # Not an API spec, using OpenAPI for structured plan
+
+components:
+  schemas:
+    ImplementationPlan:
+      type: object
+      properties:
+        phases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phase'
+        slos:
+          $ref: '#/components/schemas/SLOs'
+        validation:
+          $ref: '#/components/schemas/Validation'
+
+    Phase:
+      type: object
+      required: [name, duration, deliverables]
+      properties:
+        name:
+          type: string
+        duration:
+          type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+
+    SLOs:
+      type: object
+      properties:
+        correctness:
+          type: object
+        maintainability:
+          type: object
+        observability:
+          type: object
+
+    Validation:
+      type: object
+      properties:
+        criteria:
+          type: array
+          items:
+            type: string
+
+# Implementation Plan Details
+x-plan:
+  phases:
+    - name: "Phase 1: Architecture & Planning"
+      duration: "5 minutes"
+      deliverables:
+        - "MADR 0004: Unit testing strategy decision"
+        - "plan.yaml: This implementation plan"
+      tasks:
+        - Create ADR documenting unit testing decision
+        - Create plan.yaml referencing ADR-0004
+        - Document test coverage goals and organization
+      dependencies: []
+      validation:
+        - ADR follows MADR format
+        - plan.yaml references x-adr-id: "0004"
+        - Coverage goals documented (15+ test cases)
+
+    - name: "Phase 2: Test File Creation"
+      duration: "10 minutes"
+      deliverables:
+        - "tests/test_url_helpers.py (test file structure)"
+      tasks:
+        - Create tests/ directory if not exists
+        - Create test_url_helpers.py with class structure
+        - Add imports and test class organization
+        - Set up pytest structure (TestFormatSuccess, TestClickableLink, TestValidateUrl)
+      dependencies:
+        - Phase 1 complete
+      validation:
+        - tests/ directory exists
+        - test_url_helpers.py created
+        - Three test classes defined
+        - File imports url_helpers functions
+
+    - name: "Phase 3: format_success() Tests"
+      duration: "15 minutes"
+      deliverables:
+        - "6+ tests for format_success() function"
+      tasks:
+        - Test happy path (valid input with all fields)
+        - Test name field fallback (missing name_field)
+        - Test custom name_field parameter
+        - Test TypeError when resource_data not dict
+        - Test KeyError when id missing
+        - Test KeyError when jobberWebUri missing
+      dependencies:
+        - Phase 2 complete
+      validation:
+        - 6+ tests in TestFormatSuccess class
+        - All error cases raise expected exceptions
+        - Happy path validates output format
+        - Tests use pytest.raises for exceptions
+
+    - name: "Phase 4: clickable_link() Tests"
+      duration: "10 minutes"
+      deliverables:
+        - "4+ tests for clickable_link() function"
+      tasks:
+        - Test ANSI OSC 8 format (url and text provided)
+        - Test text defaults to url when not provided
+        - Test TypeError when url not string
+        - Test TypeError when text not string or None
+      dependencies:
+        - Phase 3 complete
+      validation:
+        - 4+ tests in TestClickableLink class
+        - ANSI escape sequence validated (OSC 8 format)
+        - Type errors tested
+        - Default text behavior verified
+
+    - name: "Phase 5: validate_url() Tests"
+      duration: "10 minutes"
+      deliverables:
+        - "5+ tests for validate_url() function"
+      tasks:
+        - Test happy path (valid jobberWebUri present)
+        - Test custom field parameter (previewUrl)
+        - Test TypeError when resource_data not dict
+        - Test KeyError when field missing
+        - Test KeyError when field is None
+        - Test ValueError when field is empty string
+        - Test TypeError when field is not string
+      dependencies:
+        - Phase 4 complete
+      validation:
+        - 5+ tests in TestValidateUrl class
+        - All exception types tested
+        - Custom field parameter tested
+        - Empty string edge case covered
+
+    - name: "Phase 6: Test Execution & Validation"
+      duration: "5 minutes"
+      deliverables:
+        - "All tests passing"
+        - "Test execution report"
+      tasks:
+        - Run pytest tests/test_url_helpers.py
+        - Verify all tests pass
+        - Check test count (15+ tests expected)
+        - Run with verbose output to verify test names
+      dependencies:
+        - Phase 5 complete
+      validation:
+        - All tests pass (0 failures)
+        - 15+ tests executed
+        - No pytest errors or warnings
+        - Test names descriptive
+
+    - name: "Phase 7: Documentation & Metadata"
+      duration: "5 minutes"
+      deliverables:
+        - "Updated CHANGELOG.md"
+        - "Updated catalog-info.yaml"
+      tasks:
+        - Add unit testing to CHANGELOG features
+        - Update catalog-info.yaml with test information
+        - Verify ADR-plan-code sync
+      dependencies:
+        - Phase 6 complete
+      validation:
+        - CHANGELOG includes unit testing
+        - catalog-info.yaml updated
+        - ADR-0004 ↔ plan.yaml ↔ tests synchronized
+
+  slos:
+    correctness:
+      target: "100% - All url_helpers functions validated"
+      metrics:
+        - "15+ test cases covering happy path and errors"
+        - "All exception types verified (TypeError, KeyError, ValueError)"
+        - "ANSI formatting validated against OSC 8 standard"
+      validation:
+        - Tests verify format_success() output format
+        - Tests verify clickable_link() ANSI escape codes
+        - Tests verify validate_url() exception messages
+
+    maintainability:
+      target: "Tests enable safe refactoring"
+      metrics:
+        - "Tests focused on behavior, not implementation"
+        - "Test names self-documenting"
+        - "No complex test setup required"
+      validation:
+        - Test classes organized by function
+        - Test names follow pattern: test_<function>_<scenario>_<expected>
+        - Tests use simple assert statements
+
+    observability:
+      target: "Test failures provide actionable errors"
+      metrics:
+        - "pytest output shows failing test name"
+        - "Exception messages validated"
+        - "Test failures pinpoint exact issue"
+      validation:
+        - Run tests in verbose mode (-v)
+        - Verify exception match patterns specific
+        - Test names indicate what broke
+
+  validation:
+    criteria:
+      - "ADR-0004 and plan.yaml created and synchronized"
+      - "tests/test_url_helpers.py created with 3 test classes"
+      - "15+ tests total (6+ format_success, 4+ clickable_link, 5+ validate_url)"
+      - "All tests pass when executed"
+      - "ANSI OSC 8 formatting validated"
+      - "All exception types tested (TypeError, KeyError, ValueError)"
+      - "CHANGELOG.md updated with testing feature"
+
+    verification:
+      - method: "ADR-plan sync check"
+        command: "grep 'x-adr-id.*0004' docs/plan/0004-url-helpers-unit-tests/plan.yaml"
+        expected: "x-adr-id: '0004' present"
+
+      - method: "Test file exists"
+        command: "test -f tests/test_url_helpers.py && echo 'exists'"
+        expected: "exists"
+
+      - method: "Test execution"
+        command: "uv run pytest tests/test_url_helpers.py -v"
+        expected: "All tests pass, 15+ tests collected"
+
+      - method: "Test count check"
+        command: "uv run pytest tests/test_url_helpers.py --collect-only -q | tail -1"
+        expected: "15 tests or more"
+
+      - method: "ANSI format validation"
+        command: "grep -q '\\\\033\\]8;;' tests/test_url_helpers.py && echo 'OSC8 tested'"
+        expected: "OSC8 tested"
+
+      - method: "Exception testing"
+        command: "grep -c 'pytest.raises' tests/test_url_helpers.py"
+        expected: "10+ uses of pytest.raises"
+
+  effort:
+    total: "60 minutes"
+    breakdown:
+      - phase: "Architecture & Planning"
+        duration: "5 minutes"
+      - phase: "Test File Creation"
+        duration: "10 minutes"
+      - phase: "format_success() Tests"
+        duration: "15 minutes"
+      - phase: "clickable_link() Tests"
+        duration: "10 minutes"
+      - phase: "validate_url() Tests"
+        duration: "10 minutes"
+      - phase: "Test Execution & Validation"
+        duration: "5 minutes"
+      - phase: "Documentation & Metadata"
+        duration: "5 minutes"
+
+  dependencies:
+    external:
+      - name: "pytest"
+        purpose: "Testing framework"
+        version: ">=9.0.0"
+        location: "dev dependency (already installed)"
+
+    internal:
+      - name: "jobber/url_helpers.py"
+        purpose: "Module under test"
+        location: "/Users/terryli/own/jobber/jobber/url_helpers.py"
+
+      - name: "ADR-0001"
+        purpose: "Fail-fast error handling principle"
+        location: "/Users/terryli/own/jobber/docs/decisions/0001-jobber-api-client-architecture.md"
+
+      - name: "ADR-0003"
+        purpose: "Visual confirmation URL pattern (url_helpers origin)"
+        location: "/Users/terryli/own/jobber/docs/decisions/0003-visual-confirmation-urls.md"
+
+  success_criteria:
+    - "All url_helpers functions have comprehensive test coverage"
+    - "Happy path and all error cases tested"
+    - "ANSI formatting validated against OSC 8 standard"
+    - "Tests execute successfully in CI/local environments"
+    - "Test names self-documenting and descriptive"
+    - "Exception messages validated for clarity"
+    - "Tests enable safe refactoring (correctness SLO achieved)"
+
+  impact:
+    correctness:
+      - "100% SLO achieved via comprehensive testing"
+      - "Regression protection during refactoring"
+      - "Edge cases validated (empty strings, None, encoding errors)"
+      - "Type validation verified"
+
+    maintainability:
+      - "Safe refactoring with test safety net"
+      - "Tests serve as usage documentation"
+      - "Faster debugging (failing tests pinpoint issues)"
+      - "Easier onboarding (tests show expected behavior)"
+
+    observability:
+      - "Test failures provide clear error messages"
+      - "Coverage reports show untested paths"
+      - "Exception messages validated for user clarity"

@@ -1,0 +1,407 @@
+openapi: 3.1.0
+info:
+  title: Visual Confirmation URL Pattern Implementation Plan
+  version: 1.0.0
+  description: |
+    Implement visual confirmation URL pattern to bridge API operations and web UI verification.
+    Provide users with clickable links (jobberWebUri) to immediately verify API-created resources
+    in Jobber's web interface. Quick win UX improvement with zero performance overhead.
+  x-adr-id: "0003"
+  x-adr-link: "../../decisions/0003-visual-confirmation-urls.md"
+  x-project: jobber-python-client
+  x-created: "2025-01-17"
+
+paths: {}  # Not an API spec, using OpenAPI for structured plan
+
+components:
+  schemas:
+    ImplementationPlan:
+      type: object
+      properties:
+        phases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phase'
+        slos:
+          $ref: '#/components/schemas/SLOs'
+        risks:
+          $ref: '#/components/schemas/Risks'
+        validation:
+          $ref: '#/components/schemas/Validation'
+
+    Phase:
+      type: object
+      required: [name, duration, deliverables]
+      properties:
+        name:
+          type: string
+        duration:
+          type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+
+    SLOs:
+      type: object
+      properties:
+        maintainability:
+          type: object
+        correctness:
+          type: object
+        observability:
+          type: object
+        availability:
+          type: object
+
+    Risks:
+      type: object
+      properties:
+        technical:
+          type: array
+          items:
+            type: object
+        process:
+          type: array
+          items:
+            type: object
+
+    Validation:
+      type: object
+      properties:
+        criteria:
+          type: array
+          items:
+            type: string
+        verification:
+          type: array
+          items:
+            type: object
+
+# Implementation Plan Details
+x-plan:
+  phases:
+    - name: "Phase 1: Architecture & Planning"
+      duration: "10 minutes"
+      deliverables:
+        - "MADR 0003: Visual confirmation URL pattern decision"
+        - "plan.yaml: This implementation plan"
+        - "Research: Jobber API jobberWebUri field availability"
+      tasks:
+        - Create ADR documenting visual confirmation pattern decision
+        - Create plan.yaml referencing ADR-0003
+        - Research Jobber GraphQL API for URL fields (jobberWebUri, previewUrl)
+        - Document available resources with URL support
+      dependencies: []
+      validation:
+        - ADR follows MADR format
+        - plan.yaml references x-adr-id: "0003"
+        - URL fields researched and documented
+
+    - name: "Phase 2: Documentation & Example"
+      duration: "20 minutes"
+      deliverables:
+        - "docs/visual-confirmation-urls.md (comprehensive guide)"
+        - "examples/visual_confirmation_urls.py (working example)"
+      tasks:
+        - Create comprehensive guide with problem/solution framing
+        - Document 5 use cases (create, query, automation, validation, batch)
+        - Document best practices (always include jobberWebUri)
+        - Create working example demonstrating all patterns
+        - Add PEP 723 inline dependencies to example
+      dependencies:
+        - Phase 1 complete
+      validation:
+        - Guide covers problem, solution, use cases, best practices
+        - Example demonstrates create, query, validation patterns
+        - Example uses PEP 723 for dependency management
+        - Python syntax valid (py_compile check)
+
+    - name: "Phase 3: Helper Utilities"
+      duration: "15 minutes"
+      deliverables:
+        - "jobber/url_helpers.py (URL formatting utilities)"
+      tasks:
+        - Create format_success() for consistent success messages
+        - Create clickable_link() for ANSI terminal hyperlinks
+        - Create validate_url() to check jobberWebUri presence
+        - Add type hints and docstrings
+        - Follow fail-fast error handling (raise on invalid input)
+      dependencies:
+        - Phase 2 complete
+      validation:
+        - Module exports 3 functions (format_success, clickable_link, validate_url)
+        - Type hints present (str -> str, dict -> str, etc.)
+        - Raises TypeError on invalid inputs
+        - Zero external dependencies (stdlib only)
+
+    - name: "Phase 4: Example Retrofits"
+      duration: "15 minutes"
+      deliverables:
+        - "examples/basic_usage.py (updated with jobberWebUri)"
+        - "examples/error_handling.py (updated with URL context)"
+      tasks:
+        - Update basic_usage.py queries to include jobberWebUri
+        - Update error_handling.py to show URLs in error context
+        - Use url_helpers.format_success() for consistency
+        - Add comments explaining jobberWebUri inclusion
+        - Ensure existing functionality unchanged
+      dependencies:
+        - Phase 3 complete
+      validation:
+        - basic_usage.py queries include jobberWebUri field
+        - error_handling.py shows URLs when available
+        - Examples use url_helpers module
+        - Examples still runnable (no breaking changes)
+
+    - name: "Phase 5: Documentation Integration"
+      duration: "10 minutes"
+      deliverables:
+        - "README.md (updated with Visual Confirmation section)"
+        - "CLAUDE.md (updated with URL pattern references)"
+      tasks:
+        - Add "Visual Confirmation URLs (Quick Win!)" section to README
+        - Update CLAUDE.md features list with visual confirmation
+        - Link to comprehensive guide (docs/visual-confirmation-urls.md)
+        - Link to working example (examples/visual_confirmation_urls.py)
+        - Update examples list in both files
+      dependencies:
+        - Phase 4 complete
+      validation:
+        - README has Visual Confirmation section after Quick Start
+        - CLAUDE.md features list includes visual confirmation
+        - Links to guide and example resolve correctly
+        - Examples list updated in both files
+
+    - name: "Phase 6: Validation & Testing"
+      duration: "10 minutes"
+      deliverables:
+        - "Validation report"
+      tasks:
+        - Run examples/visual_confirmation_urls.py
+        - Run updated examples/basic_usage.py
+        - Run updated examples/error_handling.py
+        - Verify url_helpers module imports correctly
+        - Verify all links in documentation resolve
+        - Check ADR-plan-code sync
+      dependencies:
+        - Phase 5 complete
+      validation:
+        - All 3 examples run without errors
+        - url_helpers importable from jobber package
+        - All documentation links valid
+        - ADR-0003 ↔ plan.yaml ↔ code synchronized
+
+    - name: "Phase 7: Metadata Updates"
+      duration: "5 minutes"
+      deliverables:
+        - "catalog-info.yaml (updated if needed)"
+        - "CHANGELOG.md (updated with feature)"
+      tasks:
+        - Review catalog-info.yaml for updates
+        - Add visual confirmation feature to CHANGELOG
+        - Verify semantic-release compatibility
+        - Update project stats in CLAUDE.md if LOC changed significantly
+      dependencies:
+        - Phase 6 complete
+      validation:
+        - CHANGELOG.md includes visual confirmation feature
+        - Project metadata accurate
+        - No breaking changes introduced
+
+  slos:
+    maintainability:
+      target: "Centralized URL formatting logic, consistent pattern across examples"
+      metrics:
+        - "url_helpers module < 100 LOC"
+        - "All examples use url_helpers (DRY principle)"
+        - "Pattern documented in comprehensive guide"
+      validation:
+        - url_helpers.py module size check
+        - Examples grep for url_helpers import
+        - Guide covers all use cases
+
+    correctness:
+      target: "100% - URLs from API are reliable, ANSI codes follow standards"
+      metrics:
+        - "Use API-provided jobberWebUri (not client-constructed)"
+        - "ANSI hyperlink codes follow OSC 8 standard"
+        - "validate_url() detects missing URLs"
+      validation:
+        - No client-side URL construction code
+        - ANSI codes tested in iTerm2/VSCode terminal
+        - validate_url() raises on missing jobberWebUri
+
+    observability:
+      target: "Users can visually verify all API operations via web links"
+      metrics:
+        - "All create/update examples show jobberWebUri"
+        - "Error messages include URLs when available"
+        - "Validation example demonstrates URL-based verification"
+      validation:
+        - visual_confirmation_urls.py demonstrates 5 patterns
+        - error_handling.py shows URLs in error context
+        - Guide includes validation use case
+
+    availability:
+      target: "99.9% - Optional pattern, graceful degradation if URLs unavailable"
+      metrics:
+        - "url_helpers optional (core client unaffected)"
+        - "Fallback to plain URL if ANSI fails"
+        - "Missing URL doesn't break operations"
+      validation:
+        - Examples work without url_helpers (can use raw URLs)
+        - clickable_link() returns plain URL on ANSI error
+        - validate_url() raises but caller handles
+
+  risks:
+    technical:
+      - risk: "ANSI hyperlinks not supported in all terminals"
+        likelihood: "High"
+        impact: "Low"
+        mitigation: "clickable_link() provides fallback (plain URL), document terminal compatibility"
+
+      - risk: "jobberWebUri may not be available on all resources"
+        likelihood: "Medium"
+        impact: "Low"
+        mitigation: "validate_url() detects missing URLs, document known limitations, provide introspection query"
+
+      - risk: "URL structure may change (Jobber routing updates)"
+        likelihood: "Low"
+        impact: "Low"
+        mitigation: "Use API-provided URLs only (not client-constructed), no dependency on URL structure"
+
+      - risk: "url_helpers may be too opinionated for some use cases"
+        likelihood: "Medium"
+        impact: "Low"
+        mitigation: "Module is optional, users can format URLs directly, document escape hatch"
+
+    process:
+      - risk: "Examples may diverge (some use url_helpers, some don't)"
+        likelihood: "Medium"
+        impact: "Low"
+        mitigation: "Retrofit all examples in Phase 4, document pattern consistency in guide"
+
+      - risk: "Documentation may become stale vs. Jobber API changes"
+        likelihood: "Low"
+        impact: "Low"
+        mitigation: "Link to Jobber API docs, document introspection query to check URL availability"
+
+  validation:
+    criteria:
+      - "ADR-0003 and plan.yaml created and synchronized"
+      - "docs/visual-confirmation-urls.md comprehensive guide created"
+      - "examples/visual_confirmation_urls.py working example created"
+      - "jobber/url_helpers.py helper module created (< 100 LOC)"
+      - "examples/basic_usage.py and error_handling.py retrofitted"
+      - "README.md and CLAUDE.md updated with Visual Confirmation section"
+      - "All examples runnable without errors"
+      - "All documentation links resolve correctly"
+
+    verification:
+      - method: "ADR-plan sync check"
+        command: "grep 'x-adr-id.*0003' docs/plan/0003-visual-confirmation-urls/plan.yaml"
+        expected: "x-adr-id: '0003' present"
+
+      - method: "File creation check"
+        command: "ls docs/visual-confirmation-urls.md examples/visual_confirmation_urls.py jobber/url_helpers.py"
+        expected: "All 3 files exist"
+
+      - method: "Module LOC check"
+        command: "wc -l jobber/url_helpers.py"
+        expected: "< 100 lines"
+
+      - method: "Example syntax check"
+        command: "uv run --no-project python3 -m py_compile examples/visual_confirmation_urls.py"
+        expected: "No syntax errors"
+
+      - method: "Example execution"
+        command: "uv run examples/visual_confirmation_urls.py"
+        expected: "Runs without errors, shows URL patterns"
+
+      - method: "Import test"
+        command: "uv run --no-project python3 -c 'from jobber.url_helpers import format_success, clickable_link, validate_url'"
+        expected: "Imports successfully"
+
+      - method: "Link validation"
+        command: "grep -o '\\[.*\\](.*)' README.md CLAUDE.md docs/visual-confirmation-urls.md | grep -v '^#'"
+        expected: "All markdown links resolve"
+
+      - method: "Examples list check"
+        command: "grep 'visual_confirmation_urls' README.md CLAUDE.md"
+        expected: "Example referenced in both files"
+
+  effort:
+    total: "85 minutes"
+    breakdown:
+      - phase: "Architecture & Planning"
+        duration: "10 minutes"
+      - phase: "Documentation & Example"
+        duration: "20 minutes"
+      - phase: "Helper Utilities"
+        duration: "15 minutes"
+      - phase: "Example Retrofits"
+        duration: "15 minutes"
+      - phase: "Documentation Integration"
+        duration: "10 minutes"
+      - phase: "Validation & Testing"
+        duration: "10 minutes"
+      - phase: "Metadata Updates"
+        duration: "5 minutes"
+
+  dependencies:
+    external:
+      - name: "Jobber GraphQL API"
+        purpose: "Provides jobberWebUri and previewUrl fields"
+        location: "https://api.getjobber.com/api/graphql"
+        documentation: "https://developer.getjobber.com/docs/"
+
+    internal:
+      - name: "ADR-0001"
+        purpose: "Fail-fast error handling principle"
+        location: "/Users/terryli/own/jobber/docs/decisions/0001-jobber-api-client-architecture.md"
+
+      - name: "jobber/client.py"
+        purpose: "GraphQL query execution (url_helpers compatible)"
+        location: "/Users/terryli/own/jobber/jobber/client.py"
+
+      - name: "examples/basic_usage.py"
+        purpose: "Example to retrofit with jobberWebUri"
+        location: "/Users/terryli/own/jobber/examples/basic_usage.py"
+
+      - name: "examples/error_handling.py"
+        purpose: "Example to retrofit with URL context"
+        location: "/Users/terryli/own/jobber/examples/error_handling.py"
+
+  success_criteria:
+    - "Users can get web links for ALL API operations (create, query, update)"
+    - "Consistent URL formatting across all examples via url_helpers"
+    - "Comprehensive guide enables quick start and advanced use cases"
+    - "ANSI hyperlinks work in modern terminals (iTerm2, VSCode)"
+    - "Graceful degradation when URLs unavailable or ANSI unsupported"
+    - "Zero performance overhead (jobberWebUri already in API response)"
+    - "Documentation integration maintains hub-and-spoke pattern"
+    - "All examples demonstrate visual confirmation pattern"
+
+  impact:
+    users:
+      - "Immediate visual confirmation of API operations"
+      - "Reduced time debugging (click link to see resource state)"
+      - "Increased trust in automation (can verify in web UI)"
+      - "Better error recovery (see current state vs. expected)"
+
+    developers:
+      - "Simple pattern: Always include jobberWebUri"
+      - "Helper utilities for consistent formatting (DRY)"
+      - "Terminal output more professional (clickable links)"
+      - "Integration patterns for CLI, Slack, web dashboards"
+
+    project:
+      - "Differentiation: First-class UX for API-to-UI bridge"
+      - "Documentation quality: Comprehensive use case coverage"
+      - "Code quality: Centralized URL formatting logic"
+      - "Minimal cost: ~100 LOC, zero dependencies, zero overhead"

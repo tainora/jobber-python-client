@@ -1,0 +1,368 @@
+openapi: 3.1.0
+info:
+  title: OAuth PKCE Skill Extraction Implementation Plan
+  version: 1.0.0
+  description: |
+    Extract OAuth 2.0 Authorization Code with PKCE authentication pattern into reusable atomic skill.
+    Proven pattern from jobber_auth.py and jobber/auth.py becomes canonical implementation for
+    future OAuth integrations.
+  x-adr-id: "0002"
+  x-adr-link: "../../decisions/0002-oauth-pkce-skill-extraction.md"
+  x-project: jobber-python-client
+  x-created: "2025-01-17"
+
+paths: {}  # Not an API spec, using OpenAPI for structured plan
+
+components:
+  schemas:
+    ImplementationPlan:
+      type: object
+      properties:
+        phases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phase'
+        slos:
+          $ref: '#/components/schemas/SLOs'
+        risks:
+          $ref: '#/components/schemas/Risks'
+        validation:
+          $ref: '#/components/schemas/Validation'
+
+    Phase:
+      type: object
+      required: [name, duration, deliverables]
+      properties:
+        name:
+          type: string
+        duration:
+          type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+
+    SLOs:
+      type: object
+      properties:
+        maintainability:
+          type: object
+        correctness:
+          type: object
+        observability:
+          type: object
+        availability:
+          type: object
+
+    Risks:
+      type: object
+      properties:
+        technical:
+          type: array
+          items:
+            type: object
+        process:
+          type: array
+          items:
+            type: object
+
+    Validation:
+      type: object
+      properties:
+        criteria:
+          type: array
+          items:
+            type: string
+        verification:
+          type: array
+          items:
+            type: object
+
+# Implementation Plan Details
+x-plan:
+  phases:
+    - name: "Phase 1: Architecture & Planning"
+      duration: "5 minutes"
+      deliverables:
+        - "MADR 0002: OAuth PKCE skill extraction decision"
+        - "plan.yaml: This implementation plan"
+        - "skill-architecture guidance loaded"
+      tasks:
+        - Create ADR documenting skill extraction decision
+        - Create plan.yaml referencing ADR-0002
+        - Invoke skill-architecture skill to load patterns
+      dependencies: []
+      validation:
+        - ADR follows MADR format
+        - plan.yaml references x-adr-id: "0002"
+        - skill-architecture patterns loaded
+
+    - name: "Phase 2: Skill Structure Creation"
+      duration: "10 minutes"
+      deliverables:
+        - "skills/oauth-pkce-doppler/ directory structure"
+        - "SKILL.md hub document"
+        - "Directory skeleton (assets/, references/, examples/)"
+      tasks:
+        - Create skill directory at skills/oauth-pkce-doppler/
+        - Create subdirectories (assets/, references/, examples/)
+        - Create SKILL.md following hub-and-spoke pattern
+        - Add skill metadata (name, description, triggers)
+      dependencies:
+        - Phase 1 complete
+      validation:
+        - Directory structure matches skill-architecture spec
+        - SKILL.md has Quick Start, When to Use, References
+        - All subdirectories created
+
+    - name: "Phase 3: Assets Creation"
+      duration: "15 minutes"
+      deliverables:
+        - "assets/oauth_auth_template.py (parameterized jobber_auth.py)"
+        - "assets/token_manager_template.py (parameterized auth.py)"
+        - "assets/doppler_token_flow.sh (verification script)"
+      tasks:
+        - Copy jobber_auth.py → parameterize → oauth_auth_template.py
+        - Extract TokenManager from jobber/auth.py → token_manager_template.py
+        - Create doppler_token_flow.sh for token verification
+        - Add inline documentation for parameterization
+      dependencies:
+        - Phase 2 complete
+      validation:
+        - Templates have no hardcoded Jobber URLs
+        - All configuration points parameterized
+        - Inline comments explain parameters
+
+    - name: "Phase 4: References Documentation"
+      duration: "20 minutes"
+      deliverables:
+        - "references/security-considerations.md"
+        - "references/doppler-integration.md"
+        - "references/pkce-implementation.md"
+        - "references/token-lifecycle.md"
+        - "references/troubleshooting.md"
+      tasks:
+        - Document OAuth security (PKCE, state, tokens, redirect URI)
+        - Document Doppler patterns (setup, naming, verification)
+        - Document PKCE technical details (RFC 7636, code generation)
+        - Document token lifecycle (proactive/reactive refresh, threading)
+        - Document troubleshooting (common errors, debugging, verification)
+      dependencies:
+        - Phase 3 complete
+      validation:
+        - Security docs cover PKCE, token storage, CSRF
+        - Doppler docs include secret naming conventions
+        - PKCE docs reference RFC 7636
+        - Lifecycle docs cover threading and concurrency
+        - Troubleshooting covers common errors from jobber implementation
+
+    - name: "Phase 5: Examples Creation"
+      duration: "15 minutes"
+      deliverables:
+        - "examples/basic_oauth_flow.py"
+        - "examples/custom_callback_server.py"
+        - "examples/error_handling_patterns.py"
+        - "examples/README.md"
+      tasks:
+        - Create minimal OAuth PKCE example
+        - Create advanced callback server example
+        - Create comprehensive error handling example
+        - Create examples index with navigation
+      dependencies:
+        - Phase 4 complete
+      validation:
+        - Examples are runnable (PEP 723 inline dependencies)
+        - Examples demonstrate basic → advanced progression
+        - README.md indexes all examples
+
+    - name: "Phase 6: Project CLAUDE.md"
+      duration: "10 minutes"
+      deliverables:
+        - "CLAUDE.md (project root hub-and-spoke)"
+      tasks:
+        - Create CLAUDE.md following hub-and-spoke pattern
+        - Link to README.md (avoid API reference duplication)
+        - Link to ADR-0001, ADR-0002, plan.yaml files
+        - Link to oauth-pkce-doppler skill
+        - Document module structure and patterns
+      dependencies:
+        - Phase 5 complete
+      validation:
+        - CLAUDE.md serves as navigation hub
+        - No duplication of README.md API reference
+        - Links to skill, ADRs, plan.yaml all valid
+        - Progressive disclosure (brief → detailed → source)
+
+    - name: "Phase 7: Validation"
+      duration: "5 minutes"
+      deliverables:
+        - "Validation report"
+      tasks:
+        - Verify all skill files created (13 files expected)
+        - Verify all links resolve correctly
+        - Verify templates are parameterized
+        - Verify security documentation is comprehensive
+        - Verify CLAUDE.md follows hub-and-spoke pattern
+      dependencies:
+        - Phase 6 complete
+      validation:
+        - 13 files created in oauth-pkce-doppler skill
+        - CLAUDE.md exists and links resolve
+        - Templates can be adapted for GitHub OAuth
+        - Security docs cover PKCE, tokens, state, redirect URI
+
+  slos:
+    maintainability:
+      target: "Single source of truth for OAuth PKCE pattern"
+      metrics:
+        - "Skill templates reusable for 3+ OAuth providers"
+        - "Bug fixes propagate to all users via skill"
+        - "Security improvements codified in documentation"
+      validation:
+        - Templates tested with Jobber and GitHub OAuth
+        - Documentation covers provider-agnostic patterns
+        - Assets include verification scripts
+
+    correctness:
+      target: "100% - Templates produce working OAuth implementations"
+      metrics:
+        - "Templates include all required OAuth parameters"
+        - "PKCE implementation follows RFC 7636"
+        - "Token storage follows security best practices"
+      validation:
+        - Templates tested end-to-end with Doppler
+        - PKCE code verifier/challenge validated
+        - Token refresh patterns tested
+
+    observability:
+      target: "Comprehensive troubleshooting and debugging support"
+      metrics:
+        - "All common errors documented with resolutions"
+        - "Verification scripts validate token flows"
+        - "Examples demonstrate debugging techniques"
+      validation:
+        - troubleshooting.md covers 10+ common errors
+        - doppler_token_flow.sh verifies token existence
+        - Examples include error handling patterns
+
+    availability:
+      target: "99.9% - Skill usable across projects without modification"
+      metrics:
+        - "Templates require only configuration, not code changes"
+        - "Documentation accessible via hub-and-spoke navigation"
+        - "Examples runnable via uv run"
+      validation:
+        - Templates accept configuration parameters
+        - SKILL.md provides Quick Start copy-paste
+        - Examples use PEP 723 inline dependencies
+
+  risks:
+    technical:
+      - risk: "Templates may not cover all OAuth provider variations"
+        likelihood: "Medium"
+        impact: "Medium"
+        mitigation: "Test with 2+ providers (Jobber, GitHub), document known variations"
+
+      - risk: "PKCE implementation may have security vulnerabilities"
+        likelihood: "Low"
+        impact: "High"
+        mitigation: "Follow RFC 7636, document security best practices, reference production-tested jobber_auth.py"
+
+      - risk: "Doppler integration may fail in non-standard environments"
+        likelihood: "Medium"
+        impact: "Low"
+        mitigation: "Document Doppler requirements, provide verification script, include troubleshooting"
+
+    process:
+      - risk: "Skill may become outdated as OAuth standards evolve"
+        likelihood: "Low"
+        impact: "Medium"
+        mitigation: "Link to RFCs, document update process, use semantic versioning if migrated to global"
+
+      - risk: "Documentation may become stale vs. implementation"
+        likelihood: "Medium"
+        impact: "Low"
+        mitigation: "Keep jobber_auth.py as reference implementation, validate skill against it"
+
+  validation:
+    criteria:
+      - "All 13 files created in oauth-pkce-doppler skill"
+      - "SKILL.md has Quick Start, When to Use, References sections"
+      - "Templates parameterized (no hardcoded Jobber URLs)"
+      - "Security documentation comprehensive (PKCE, tokens, state, redirect URI)"
+      - "CLAUDE.md follows hub-and-spoke (links not duplication)"
+      - "All links resolve correctly"
+      - "Examples are runnable (PEP 723)"
+      - "Progressive disclosure works (brief → detailed → source)"
+
+    verification:
+      - method: "File count check"
+        command: "find skills/oauth-pkce-doppler -type f | wc -l"
+        expected: "13 files"
+
+      - method: "Link validation"
+        command: "grep -r '\\[.*\\](' CLAUDE.md skills/oauth-pkce-doppler/SKILL.md"
+        expected: "All links resolve to existing files"
+
+      - method: "Template parameterization check"
+        command: "grep -i 'jobber' skills/oauth-pkce-doppler/assets/*.py"
+        expected: "No hardcoded Jobber references (only in comments)"
+
+      - method: "Documentation completeness"
+        command: "ls skills/oauth-pkce-doppler/references/"
+        expected: "5 markdown files (security, doppler, pkce, lifecycle, troubleshooting)"
+
+  effort:
+    total: "80 minutes"
+    breakdown:
+      - phase: "Architecture & Planning"
+        duration: "5 minutes"
+      - phase: "Skill Structure Creation"
+        duration: "10 minutes"
+      - phase: "Assets Creation"
+        duration: "15 minutes"
+      - phase: "References Documentation"
+        duration: "20 minutes"
+      - phase: "Examples Creation"
+        duration: "15 minutes"
+      - phase: "Project CLAUDE.md"
+        duration: "10 minutes"
+      - phase: "Validation"
+        duration: "5 minutes"
+
+  dependencies:
+    external:
+      - name: "skill-architecture skill"
+        purpose: "Load skill creation patterns and requirements"
+        location: "~/.claude/skills/skill-architecture/"
+
+      - name: "documentation-standards skill"
+        purpose: "Hub-and-spoke and progressive disclosure patterns"
+        location: "~/.claude/skills/documentation-standards/"
+
+    internal:
+      - name: "jobber_auth.py"
+        purpose: "Reference implementation for OAuth PKCE templates"
+        location: "/Users/terryli/own/jobber/jobber_auth.py"
+
+      - name: "jobber/auth.py"
+        purpose: "Reference implementation for TokenManager template"
+        location: "/Users/terryli/own/jobber/jobber/auth.py"
+
+      - name: "ADR-0001"
+        purpose: "Established fail-fast and Doppler patterns"
+        location: "/Users/terryli/own/jobber/docs/decisions/0001-jobber-api-client-architecture.md"
+
+  success_criteria:
+    - "Skill structure follows skill-architecture patterns"
+    - "Templates reusable for GitHub, Google, Stripe OAuth"
+    - "Security documentation comprehensive and RFC-compliant"
+    - "CLAUDE.md serves as effective navigation hub"
+    - "Progressive disclosure enables quick start → deep dive"
+    - "All links valid and resolve correctly"
+    - "Examples demonstrate basic → advanced patterns"
+    - "Troubleshooting covers common errors from production"
