@@ -24,6 +24,7 @@
 **Count**: 0
 
 **Search Results**:
+
 - No files matching `tests/integration/*`
 - No files matching `tests/*integration*`
 - No pytest markers for integration tests (e.g., `@pytest.mark.integration`)
@@ -34,11 +35,13 @@
 **Count**: 42 tests (100% pass rate)
 
 **Test Files**:
+
 1. `/Users/terryli/own/jobber/tests/test_exceptions.py` - 7 tests
 2. `/Users/terryli/own/jobber/tests/test_url_helpers.py` - 19 tests
 3. `/Users/terryli/own/jobber/tests/test_webhooks.py` - 16 tests
 
 **Test Characteristics**:
+
 - **Isolated**: All tests use pure Python data structures (no API calls)
 - **Fast**: Test suite completes in 0.05s
 - **Deterministic**: No network dependencies, no flakiness
@@ -55,6 +58,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber_auth.py` (355 LOC, PEP 723 script)
 
 **End-to-End Flow**:
+
 1. Generate PKCE code verifier/challenge
 2. Open browser to Jobber authorization URL
 3. User approves in browser
@@ -65,11 +69,13 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **CRITICAL**
 
 **Current Coverage**:
+
 - ❌ No automated tests
 - ✅ Manual validation documented in ADR-0006 (OAuth Flow section)
 - ✅ Production bug fixed (missing `expires_in` field handling)
 
 **Why Integration Test Needed**:
+
 - OAuth flow crosses external boundaries (Jobber API, Doppler CLI, web browser)
 - PKCE code exchange requires live API interaction
 - Token exchange validation requires real OAuth app credentials
@@ -80,6 +86,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber/auth.py` (TokenManager class, lines 126-191)
 
 **End-to-End Flow**:
+
 1. **Proactive**: Background thread refreshes token 5 minutes before expiration
 2. **Reactive**: Retry once on 401 errors, then refresh token
 3. Store new tokens to Doppler
@@ -88,11 +95,13 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **HIGH**
 
 **Current Coverage**:
+
 - ❌ No automated tests
 - ✅ Unit tests for exception hierarchy (7 tests in test_exceptions.py)
 - ⚠️ Manual testing mentioned in ADR-0006 follow-up tasks (not completed)
 
 **Why Integration Test Needed**:
+
 - Token refresh requires live Jobber OAuth endpoint
 - Proactive refresh timing needs validation (does it actually refresh 5min early?)
 - Reactive refresh on 401 requires expired token scenario
@@ -104,6 +113,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber/graphql.py` (189 LOC)
 
 **End-to-End Flow**:
+
 1. Construct GraphQL query with variables
 2. Add Jobber API version header (`Api-Version: 2024-09-01`)
 3. Execute HTTP POST to Jobber GraphQL endpoint
@@ -114,11 +124,13 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **HIGH**
 
 **Current Coverage**:
+
 - ❌ No automated tests
 - ✅ Manual validation via `examples/basic_usage.py` (ADR-0006 validation results)
 - ✅ Production bugs caught and fixed (GraphQL schema corrections)
 
 **Why Integration Test Needed**:
+
 - GraphQL schema validation requires live API (type names, field availability)
 - Rate limit parsing requires actual Jobber `throttleStatus` response format
 - Error handling requires triggering real API errors (invalid fields, auth failures)
@@ -129,6 +141,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber/webhooks.py` (115 LOC)
 
 **End-to-End Flow**:
+
 1. Receive webhook POST from Jobber
 2. Extract `X-Jobber-Signature` header
 3. Compute HMAC-SHA256 digest of raw payload
@@ -139,12 +152,14 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **MEDIUM**
 
 **Current Coverage**:
+
 - ✅ Unit tests for signature validation (16 tests in test_webhooks.py, 100% pass)
 - ✅ HMAC computation tested with known payloads
 - ❌ No live webhook endpoint testing
 - ❌ No Jobber-sent webhook validation
 
 **Why Integration Test Needed**:
+
 - Webhook signature format may differ from documentation
 - Real Jobber webhook payloads may have additional fields
 - Timing attack prevention (constant-time comparison) needs validation
@@ -157,6 +172,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber/photos.py` (257 LOC)
 
 **End-to-End Flow**:
+
 1. Fetch S3 credentials from Doppler (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET_NAME)
 2. Generate S3 presigned URL (boto3, expires in 1 hour)
 3. Mobile app uploads photo to S3 via presigned URL (HTTP PUT)
@@ -167,11 +183,13 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **CRITICAL**
 
 **Current Coverage**:
+
 - ❌ No automated tests
 - ✅ Example workflow documented in `examples/photo_upload_workflow.py`
 - ⚠️ Manual validation not documented in ADR-0006
 
 **Why Integration Test Needed**:
+
 - S3 presigned URL generation requires AWS credentials
 - Photo upload to S3 requires real bucket with CORS configuration
 - Jobber `noteCreate` mutation requires live API
@@ -184,6 +202,7 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Implementation**: `/Users/terryli/own/jobber/jobber/introspection.py` (288 LOC)
 
 **End-to-End Flow**:
+
 1. Execute GraphQL `__schema` introspection query
 2. Parse schema types, fields, descriptions
 3. Cache schema to disk (`~/.cache/jobber/schema.json`)
@@ -193,12 +212,14 @@ Based on codebase analysis and v0.2.0 changelog, the following workflows exist:
 **Integration Test Gap**: **MEDIUM**
 
 **Current Coverage**:
+
 - ❌ No automated tests
 - ✅ Example workflow documented in `examples/schema_introspection.py`
 - ❌ No validation of cache behavior
 - ❌ No validation of schema change detection
 
 **Why Integration Test Needed**:
+
 - Schema introspection requires live Jobber API
 - Cache behavior needs validation (read, write, invalidation)
 - Schema comparison needs two real schema versions
@@ -217,11 +238,13 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Coverage**: GraphQL query execution, pagination, rate limit status
 
 **Validation Status**: ✅ Validated in ADR-0006
+
 - Retrieved 1 existing client (John Doe - Test Company)
 - `jobberWebUri` field confirmed working
 - Clickable URLs tested in iTerm2
 
 **Characteristics**:
+
 - Requires live Jobber API credentials
 - Requires Doppler secrets (JOBBER_ACCESS_TOKEN, etc.)
 - Tests real data (existing clients in Jobber account)
@@ -233,6 +256,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Validation Status**: ⚠️ Not mentioned in ADR-0006 validation results
 
 **Characteristics**:
+
 - Tests intentional GraphQL errors (invalid field)
 - Tests multi-page pagination
 - Tests error recovery patterns
@@ -242,6 +266,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Coverage**: Visual confirmation URL pattern, ANSI OSC 8 hyperlinks
 
 **Validation Status**: ✅ Validated in ADR-0006
+
 - ANSI OSC 8 hyperlinks render in iTerm2
 - `format_success()` helper formats correctly
 - URLs open actual Jobber resources
@@ -253,6 +278,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Validation Status**: ❌ Not validated
 
 **Characteristics**:
+
 - Requires Flask installation
 - Requires HTTPS endpoint for production
 - Requires ngrok for local development
@@ -267,6 +293,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Validation Status**: ❌ Not validated
 
 **Characteristics**:
+
 - Requires S3 bucket setup with CORS
 - Requires AWS credentials in Doppler
 - Requires boto3 installation
@@ -281,6 +308,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Validation Status**: ❌ Not validated
 
 **Characteristics**:
+
 - Tests schema caching to disk
 - Tests cache performance (uncached vs cached)
 - Tests schema diff detection
@@ -308,24 +336,26 @@ The project includes **6 example scripts** that serve as documented manual integ
 
 ### By Workflow Priority
 
-| Workflow | Risk | Unit Tests | Example Script | Manual Validation | Integration Test Gap |
-|----------|------|------------|----------------|-------------------|---------------------|
-| OAuth PKCE Flow | CRITICAL | ❌ None | ✅ jobber_auth.py | ✅ ADR-0006 | **CRITICAL** |
-| Token Refresh | HIGH | ❌ None | ❌ None | ⚠️ Partial | **HIGH** |
-| GraphQL Execution | HIGH | ❌ None | ✅ basic_usage.py | ✅ ADR-0006 | **HIGH** |
-| Webhook Validation | MEDIUM | ✅ 16 tests | ✅ webhook_handler.py | ❌ None | **MEDIUM** |
-| Photo Upload | CRITICAL | ❌ None | ✅ photo_upload_workflow.py | ❌ None | **CRITICAL** |
-| Schema Introspection | MEDIUM | ❌ None | ✅ schema_introspection.py | ❌ None | **MEDIUM** |
+| Workflow             | Risk     | Unit Tests  | Example Script              | Manual Validation | Integration Test Gap |
+| -------------------- | -------- | ----------- | --------------------------- | ----------------- | -------------------- |
+| OAuth PKCE Flow      | CRITICAL | ❌ None     | ✅ jobber_auth.py           | ✅ ADR-0006       | **CRITICAL**         |
+| Token Refresh        | HIGH     | ❌ None     | ❌ None                     | ⚠️ Partial        | **HIGH**             |
+| GraphQL Execution    | HIGH     | ❌ None     | ✅ basic_usage.py           | ✅ ADR-0006       | **HIGH**             |
+| Webhook Validation   | MEDIUM   | ✅ 16 tests | ✅ webhook_handler.py       | ❌ None           | **MEDIUM**           |
+| Photo Upload         | CRITICAL | ❌ None     | ✅ photo_upload_workflow.py | ❌ None           | **CRITICAL**         |
+| Schema Introspection | MEDIUM   | ❌ None     | ✅ schema_introspection.py  | ❌ None           | **MEDIUM**           |
 
 ### By Test Coverage Type
 
 **Unit Test Coverage**:
+
 - Exceptions: ✅ 7 tests
 - URL Helpers: ✅ 19 tests
 - Webhooks: ✅ 16 tests
 - **Total**: 42 tests (100% pass)
 
 **Integration Test Coverage**:
+
 - OAuth Flow: ❌ 0 tests
 - Token Refresh: ❌ 0 tests
 - GraphQL API: ❌ 0 tests
@@ -334,6 +364,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 - **Total**: 0 tests
 
 **Manual Validation Coverage** (from ADR-0006):
+
 - OAuth Flow: ✅ Validated
 - GraphQL Queries: ✅ Validated
 - GraphQL Mutations: ✅ Validated
@@ -374,6 +405,7 @@ The project includes **6 example scripts** that serve as documented manual integ
 **Priority 1: Validate Remaining Example Scripts**
 
 Create manual validation runbook for 4 unvalidated examples:
+
 - `examples/error_handling.py`
 - `examples/webhook_handler.py` (requires ngrok setup)
 - `examples/photo_upload_workflow.py` (requires S3 bucket)
@@ -432,6 +464,7 @@ def delete_test_clients(client: JobberClient, prefix: str = "Test"):
 **1. Automated Integration Test Suite**
 
 Create `tests/integration/` directory with:
+
 - `test_oauth_flow.py` - OAuth PKCE flow validation
 - `test_token_refresh.py` - Proactive + reactive refresh
 - `test_graphql_operations.py` - Queries, mutations, pagination
@@ -461,9 +494,9 @@ Create `.github/workflows/integration-tests.yml`:
 ```yaml
 name: Integration Tests
 on:
-  workflow_dispatch:  # Manual trigger only (not on every commit)
+  workflow_dispatch: # Manual trigger only (not on every commit)
   schedule:
-    - cron: '0 0 * * 0'  # Weekly on Sunday
+    - cron: "0 0 * * 0" # Weekly on Sunday
 
 jobs:
   integration:
@@ -492,12 +525,15 @@ Create `docs/development/integration-testing.md`:
 ## Running Integration Tests
 
 # Run all integration tests
+
 pytest -m integration
 
 # Run specific workflow
+
 pytest -m integration tests/integration/test_oauth_flow.py
 
 # Skip slow tests
+
 pytest -m "integration and not requires_browser"
 ```
 
@@ -506,6 +542,7 @@ pytest -m "integration and not requires_browser"
 **1. Contract Testing with Pact**
 
 Use Pact for provider contract testing:
+
 - Record Jobber API responses
 - Validate against recorded contracts
 - Detect breaking API changes automatically
@@ -513,6 +550,7 @@ Use Pact for provider contract testing:
 **2. Synthetic Monitoring**
 
 Deploy integration tests as synthetic monitors:
+
 - Run hourly against production Jobber API
 - Alert on failures (API changes, token refresh issues)
 - Track API uptime and latency
@@ -520,6 +558,7 @@ Deploy integration tests as synthetic monitors:
 **3. Test Environment Isolation**
 
 Create separate Jobber test account:
+
 - Dedicated OAuth app for testing
 - Separate Doppler project for test credentials
 - Automated test data cleanup after each run
@@ -531,11 +570,13 @@ Create separate Jobber test account:
 ### Current State Summary
 
 **Test Coverage**:
+
 - Unit tests: ✅ 42 tests (100% pass, 0.05s runtime)
 - Integration tests: ❌ 0 automated tests
 - Manual validation: ⚠️ Partial (2/6 examples validated)
 
 **Risk Assessment**:
+
 - **HIGH RISK**: Photo upload workflow (3 external systems, no validation)
 - **HIGH RISK**: Token refresh (timing-dependent, thread-safe, unvalidated)
 - **MEDIUM RISK**: Webhook validation (strong unit tests mitigate)
@@ -565,12 +606,14 @@ Create separate Jobber test account:
 ### Final Assessment
 
 **The Jobber Python client lacks dedicated integration tests but compensates with:**
+
 - Strong unit test coverage (42 tests, 100% pass)
 - Manual validation of critical workflows (documented in ADR-0006)
 - Real-world production validation (bugs caught and fixed before release)
 - Example scripts that serve as integration test candidates
 
 **For production readiness, the project should:**
+
 1. Complete manual validation of all 6 example scripts
 2. Add pytest integration test markers and convert examples to tests
 3. Create test data cleanup utilities
@@ -591,11 +634,13 @@ Create separate Jobber test account:
 **Coverage**: Exception hierarchy validation
 
 **What it tests**:
+
 - Base exception class with context
 - Exception subclasses (AuthenticationError, RateLimitError, etc.)
 - Context formatting in exception messages
 
 **What it doesn't test**:
+
 - Real API errors triggering exceptions
 - Exception handling in actual workflows
 
@@ -606,11 +651,13 @@ Create separate Jobber test account:
 **Coverage**: URL helper functions (format_success, clickable_link, validate_url)
 
 **What it tests**:
+
 - ANSI OSC 8 hyperlink formatting
 - URL validation (missing fields, empty strings, type errors)
 - Success message formatting
 
 **What it doesn't test**:
+
 - Real Jobber `jobberWebUri` field values
 - iTerm2 hyperlink rendering (manual validation in ADR-0006)
 
@@ -621,12 +668,14 @@ Create separate Jobber test account:
 **Coverage**: Webhook signature validation and event parsing
 
 **What it tests**:
+
 - HMAC-SHA256 signature computation
 - Valid/invalid signature detection
 - JSON payload parsing
 - Event type constants
 
 **What it doesn't test**:
+
 - Real webhook payloads from Jobber
 - Webhook endpoint HTTP handling
 - Event routing in production

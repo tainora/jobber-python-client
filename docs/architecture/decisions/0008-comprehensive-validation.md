@@ -10,6 +10,7 @@
 Post-v0.2.0 validation audit revealed significant gaps:
 
 **Test Coverage Analysis**:
+
 - 42/42 unit tests passing (100% pass rate)
 - 3/8 modules tested (37.5% module coverage)
 - 5 critical modules untested: `auth.py`, `graphql.py`, `photos.py`, `introspection.py`, `client.py`
@@ -17,21 +18,25 @@ Post-v0.2.0 validation audit revealed significant gaps:
 - 0 automated example validation
 
 **Code Quality Issues**:
+
 - 2 ruff linting errors (f-strings without placeholders)
 - 35/40 files need formatting (`ruff format`)
 - False claim in CHANGELOG.md: "Linting clean (ruff 0 errors)"
 
 **Documentation Accuracy**:
+
 - CLAUDE.md Project Stats outdated (claims 867 LOC, actually 1,721 LOC)
 - Example count incorrect (claims 2, actually 6)
 - Test count incomplete (reports 16 webhook tests, omits 42 total)
 
 **Risk Assessment**:
+
 - HIGH risk: Core authentication (`auth.py`) and API client (`graphql.py`) untested
 - CRITICAL risk: Photo upload (`photos.py`) crosses 3 external systems (Doppler, S3, Jobber) with zero automated tests
 - MEDIUM risk: No automated regression detection (manual validation only)
 
 **Business Impact**:
+
 - v0.2.0 relies on manual validation documented in ADR-0006
 - AI agent autonomy claims (70% → 90%) lack empirical validation
 - Production deployment risks authentication/S3 integration failures
@@ -48,6 +53,7 @@ Implement comprehensive validation strategy across 6 phases:
 6. **Continuous Validation** - Establish quality gates for future releases
 
 **Approach**:
+
 - Mock external dependencies (Doppler subprocess, boto3 S3, requests)
 - Use pytest markers for integration tests (`@pytest.mark.integration`, `@pytest.mark.requires_doppler`)
 - Create validation scripts (`scripts/validate-examples.sh`)
@@ -59,24 +65,28 @@ Implement comprehensive validation strategy across 6 phases:
 ### Positive
 
 **Test Coverage**:
+
 - 100% module coverage (9/9 modules tested)
 - 80%+ code coverage (measured with pytest-cov)
 - Automated regression detection (catch bugs before production)
 - Fast unit tests (~1s) + comprehensive integration tests
 
 **Code Quality**:
+
 - Consistent formatting (ruff format applied to all files)
 - Zero linting errors (ruff check passes)
 - Maintained type safety (mypy 0 errors)
 - Clean codebase for future contributors
 
 **Documentation Accuracy**:
+
 - Evidence-based validation claims
 - Accurate project statistics
 - Clear distinction between capabilities and proven outcomes
 - Validation checklist for future releases
 
 **Production Readiness**:
+
 - Critical workflows validated (OAuth, token refresh, GraphQL, S3, webhooks, schema introspection)
 - External dependency mocking prevents flaky tests
 - Integration tests provide end-to-end confidence
@@ -85,16 +95,19 @@ Implement comprehensive validation strategy across 6 phases:
 ### Negative
 
 **Implementation Effort**:
+
 - 4-6 hours initial investment
 - 90+ new tests to maintain
 - Integration test infrastructure (markers, fixtures, mocks)
 
 **Maintenance Burden**:
+
 - Update tests when API changes
 - Maintain mocks for external dependencies
 - Keep documentation synchronized with code
 
 **Trade-offs**:
+
 - Mocked dependencies ≠ real API behavior (integration tests mitigate)
 - Coverage metrics ≠ quality (manual review still required)
 - Test maintenance overhead (accepted for regression protection)
@@ -170,21 +183,25 @@ pytest --cov=jobber --cov-report=term-missing
 ### SLOs
 
 **Correctness**:
+
 - Target: 100% module test coverage (9/9)
 - Actual: Measured after Phase 2
 - Validation: `pytest --cov=jobber --cov-report=term-missing`
 
 **Maintainability**:
+
 - Target: 80%+ code coverage
 - Actual: Measured after Phase 2
 - Validation: Coverage report
 
 **Observability**:
+
 - Target: All external dependencies mocked with clear error messages
 - Actual: Mock assertions fail with actionable diagnostics
 - Validation: Manual review of test output
 
 **Availability**:
+
 - Target: Test suite runs in <10s (unit tests), <2min (integration tests)
 - Actual: Measured after Phase 6
 - Validation: `pytest --durations=10`
