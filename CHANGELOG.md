@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/tainora/jobber-python-client/compare/v0.2.0...v0.2.1) (2025-11-23)
+
+
+### Bug Fixes
+
+* apply ruff auto-fixes and consistent formatting ([377ea7e](https://github.com/tainora/jobber-python-client/commit/377ea7ea6b0733fd82da9fd964a1d1d4daaf31e1))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
