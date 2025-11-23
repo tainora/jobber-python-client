@@ -14,12 +14,13 @@ Minimal Python client for [Jobber GraphQL API](https://developer.getjobber.com/d
 ## Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/jobber-python-client.git
-cd jobber-python-client
+# Install from PyPI
+pip install jobber-python-client
 
-# Install dependencies
-uv pip install requests oauthlib
+# Or clone repository for development
+git clone https://github.com/tainora/jobber-python-client.git
+cd jobber-python-client
+uv sync
 ```
 
 ## Prerequisites
@@ -263,7 +264,7 @@ uv run --with . examples/basic_usage.py
 
 ## Architecture
 
-See [ADR-0001: Jobber API Client Architecture](docs/decisions/0001-jobber-api-client-architecture.md) for design decisions.
+See [ADR-0001: Jobber API Client Architecture](docs/architecture/decisions/0001-jobber-api-client-architecture.md) for design decisions.
 
 ### Key Principles
 
@@ -360,7 +361,7 @@ MIT
 
 - **Jobber API Docs**: https://developer.getjobber.com/docs/
 - **API Support**: api-support@getjobber.com
-- **Issues**: https://github.com/yourusername/jobber-python-client/issues
+- **Issues**: https://github.com/tainora/jobber-python-client/issues
 
 ## Changelog
 

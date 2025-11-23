@@ -204,28 +204,30 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 
 ### Phase 3: Documentation
 
-- [ ] Move VALIDATION_REPORT.md to docs/development/validation/
-- [ ] Move OAUTH_TOKEN_GUIDE.md to docs/guides/
+- [x] Move VALIDATION_REPORT.md to docs/development/validation/
+- [x] Move OAUTH_TOKEN_GUIDE.md to docs/guides/
 - [x] Update CHANGELOG.md with fixes
-- [ ] Update README.md cross-references
-- [ ] Update CLAUDE.md skill references
+- [x] Update README.md cross-references (PyPI installation, repository URLs)
+- [x] Update CLAUDE.md skill references (all ADRs listed, paths corrected)
+- [x] Consolidate ADRs to docs/architecture/decisions/ (MADR standard path)
 
 ### Phase 4: Release
 
 - [x] Commit fixes with conventional commits
 - [x] Create version tag locally (v0.1.0)
-- [ ] Create GitHub repository
-- [ ] Push code and tags to GitHub
-- [ ] Run semantic-release for GitHub release
-- [ ] Verify CHANGELOG.md updated by semantic-release
+- [x] Create GitHub repository (corrected to tainora account)
+- [x] Push code and tags to GitHub
+- [x] Create GitHub release (via gh CLI)
+- [x] Release published at https://github.com/tainora/jobber-python-client/releases/tag/v0.1.0
 
 ### Phase 5: Publication
 
-- [ ] Verify PyPI token in Doppler
-- [ ] Run `uv build` and verify no errors
-- [ ] Run `uv publish` with token from Doppler
-- [ ] Verify package installable from PyPI
-- [ ] Test installation in fresh virtualenv
+- [x] Verify PyPI token in Doppler
+- [x] Run `uv build` and verify no errors (154K tar.gz, 14K whl)
+- [x] Run `uv publish` with token from Doppler
+- [x] Verify package installable from PyPI
+- [x] Test installation in fresh virtualenv
+- [x] Package published at https://pypi.org/project/jobber-python-client/0.1.0/
 
 ## Success Criteria
 

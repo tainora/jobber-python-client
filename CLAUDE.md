@@ -4,7 +4,7 @@ Minimal Python client for [Jobber GraphQL API](https://developer.getjobber.com/d
 
 **Navigation Index**: [`docs/`](docs/) - Architecture decisions, implementation plans, and technical documentation
 
-**Quick Links**: [README](README.md) | [Examples](examples/) | [ADR](docs/decisions/) | [Skills](skills/) | [Catalog](catalog-info.yaml)
+**Quick Links**: [README](README.md) | [Examples](examples/) | [ADR](docs/architecture/decisions/) | [Skills](skills/) | [Catalog](catalog-info.yaml)
 
 ## Overview
 
@@ -82,7 +82,7 @@ JobberException (base)
 
 **Fail-fast behavior**: All errors raise exceptions immediately. No retry, no fallback, no silent failures. Caller decides recovery strategy.
 
-**Key Principles** (from [ADR-0001](docs/decisions/0001-jobber-api-client-architecture.md)):
+**Key Principles** (from [ADR-0001](docs/architecture/decisions/0001-jobber-api-client-architecture.md)):
 
 1. **Simple codebase** - Easy to understand, test, maintain
 2. **Predictable behavior** - No hidden retry loops or sleep delays
@@ -121,13 +121,16 @@ Total: 867 LOC
 
 **MADR (Architectural Decision Records)**:
 
-- [ADR-0001: Jobber API Client Architecture](docs/decisions/0001-jobber-api-client-architecture.md) - Core design decisions (fail-fast, Doppler, minimal dependencies)
-- [ADR-0002: OAuth PKCE Skill Extraction](docs/decisions/0002-oauth-pkce-skill-extraction.md) - Skill creation decision and rationale
+- [ADR-0001: Jobber API Client Architecture](docs/architecture/decisions/0001-jobber-api-client-architecture.md) - Core design decisions (fail-fast, Doppler, minimal dependencies)
+- [ADR-0002: OAuth PKCE Skill Extraction](docs/architecture/decisions/0002-oauth-pkce-skill-extraction.md) - Skill creation decision and rationale
+- [ADR-0003: Visual Confirmation URLs](docs/architecture/decisions/0003-visual-confirmation-urls.md) - Get web UI links from APIs for instant verification
+- [ADR-0004: URL Helpers Unit Tests](docs/architecture/decisions/0004-url-helpers-unit-tests.md) - Test coverage for URL helper functions
+- [ADR-0005: Skill Extraction](docs/architecture/decisions/0005-skill-extraction-visual-urls-graphql.md) - visual-confirmation-urls and graphql-query-execution skills
+- [ADR-0006: Production Readiness Validation](docs/architecture/decisions/0006-production-readiness-validation.md) - End-to-end validation and release workflow
 
-**Implementation Plans** (OpenAPI 3.1 format):
+**Implementation Plans** (Google Design Doc format):
 
-- [plan.yaml (0001)](docs/plan/0001-jobber-api-client/plan.yaml) - Client implementation phases, SLOs, risks, validation
-- [plan.yaml (0002)](docs/plan/0002-oauth-pkce-skill-extraction/plan.yaml) - Skill extraction phases, dependencies, success criteria
+- [plan.md (0006)](docs/development/plan/0006-production-readiness-validation/plan.md) - Production readiness, API validation, PyPI publication
 
 **Service Metadata**:
 
