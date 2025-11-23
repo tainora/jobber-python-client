@@ -1,6 +1,6 @@
 [project]
 name = "jobber-python-client"
-version = "0.1.0"
+version = "0.1.1"
 description = "Minimal Python client for Jobber GraphQL API with OAuth 2.0 support"
 authors = [
     {name = "tainora", email = "usalchemist@gmail.com"}
