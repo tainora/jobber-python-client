@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/tainora/jobber-python-client.git"
   },
-  "author": "Terry Li",
+  "author": "tainora",
   "license": "MIT",
   "private": true,
   "scripts": {

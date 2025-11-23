@@ -3,7 +3,7 @@ name = "jobber-python-client"
 version = "0.1.0"
 description = "Minimal Python client for Jobber GraphQL API with OAuth 2.0 support"
 authors = [
-    {name = "Terry Li", email = "usalchemist@gmail.com"}
+    {name = "tainora", email = "usalchemist@gmail.com"}
 ]
 readme = "README.md"
 license = {text = "MIT"}
@@ -31,11 +31,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/terryli/jobber-python-client"
-Documentation = "https://github.com/terryli/jobber-python-client#readme"
-Repository = "https://github.com/terryli/jobber-python-client"
-Issues = "https://github.com/terryli/jobber-python-client/issues"
-Changelog = "https://github.com/terryli/jobber-python-client/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/tainora/jobber-python-client"
+Documentation = "https://github.com/tainora/jobber-python-client#readme"
+Repository = "https://github.com/tainora/jobber-python-client"
+Issues = "https://github.com/tainora/jobber-python-client/issues"
+Changelog = "https://github.com/tainora/jobber-python-client/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling"]
