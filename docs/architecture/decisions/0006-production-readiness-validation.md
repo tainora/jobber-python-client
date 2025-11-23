@@ -92,22 +92,26 @@ mutation CreateClient($input: ClientCreateInput!) {
 ### Validation Results
 
 **OAuth Flow** (via `jobber_auth.py`):
+
 - ✅ Browser authorization successful
 - ✅ PKCE code exchange successful
 - ✅ Tokens stored in Doppler (`JOBBER_ACCESS_TOKEN`, `JOBBER_REFRESH_TOKEN`, `JOBBER_TOKEN_EXPIRES_AT`)
 - ✅ `JobberClient.from_doppler()` loads credentials correctly
 
 **GraphQL Queries** (via `list_existing_clients.py`):
+
 - ✅ Retrieved 1 existing client (John Doe - Test Company)
 - ✅ `jobberWebUri` field returned: `https://secure.getjobber.com/clients/123238532`
 - ✅ URL clickable in iTerm2 (Cmd+Click opens in browser)
 
 **GraphQL Mutations** (via `test_create_client_url.py`):
+
 - ✅ Created new client (Test Client - Demo Company)
 - ✅ `jobberWebUri` field returned: `https://secure.getjobber.com/clients/123679362`
 - ✅ URL confirmed working in Jobber web interface
 
 **Visual Confirmation Pattern**:
+
 - ✅ ANSI OSC 8 hyperlinks render in iTerm2
 - ✅ `format_success()` helper formats output correctly
 - ✅ URLs open actual Jobber resources (verified manually)

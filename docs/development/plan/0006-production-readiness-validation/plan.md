@@ -14,6 +14,7 @@
 ### Background
 
 Skill extraction (ADR-0005) completed successfully, creating two validated skills:
+
 - `visual-confirmation-urls` - Pattern for getting web UI links from APIs
 - `graphql-query-execution` - Pattern for GraphQL execution with error handling
 
@@ -32,6 +33,7 @@ End-to-end validation revealed production blockers:
 ### Current State
 
 **Fixed** (during validation):
+
 - ✅ OAuth token handling (`expires_in` defaults to 3600s)
 - ✅ Client creation mutation (corrected to `ClientCreateInput`)
 - ✅ OAuth flow validated end-to-end
@@ -39,12 +41,14 @@ End-to-end validation revealed production blockers:
 - ✅ Create client mutation validated
 
 **Untested**:
+
 - ❌ `examples/basic_usage.py` (pagination, throttle status)
 - ❌ `examples/error_handling.py` (exception hierarchy)
 - ❌ `examples/visual_confirmation_urls.py` (URL helpers)
 - ❌ Skill example files (in `skills/*/examples/`)
 
 **Cleanup Needed**:
+
 - ❌ Test client created during validation (ID: 123679362) still in Jobber account
 - ❌ VALIDATION_REPORT.md and OAUTH_TOKEN_GUIDE.md not part of official docs
 
@@ -76,17 +80,20 @@ End-to-end validation revealed production blockers:
 ### Phase 1: Validate Remaining Examples (30 min)
 
 **Examples to test**:
+
 1. `examples/basic_usage.py` - Queries, pagination, throttle status
 2. `examples/error_handling.py` - Exception handling patterns
 3. `examples/visual_confirmation_urls.py` - URL helper functions
 
 **Validation criteria**:
+
 - Script runs without errors
 - Output matches expected format
 - Real data returned from Jobber API
 - Error handling works as documented
 
 **Auto-fix protocol**:
+
 - If GraphQL schema error → Fix type names based on API error message
 - If authentication error → Verify Doppler tokens not expired
 - If rate limit error → Wait and retry (expected behavior)
@@ -95,15 +102,18 @@ End-to-end validation revealed production blockers:
 ### Phase 2: Test Data Cleanup (15 min)
 
 **Resources to delete**:
+
 - Client ID 123679362 (Test Client - Demo Company)
 
 **Approach**:
+
 1. Create `delete_test_client.py` script
 2. Use GraphQL mutation `clientDelete`
 3. Verify deletion via query
 4. Document cleanup pattern for future use
 
 **GraphQL mutation**:
+
 ```graphql
 mutation DeleteClient($id: ID!) {
   clientDelete(id: $id) {
@@ -119,17 +129,21 @@ mutation DeleteClient($id: ID!) {
 ### Phase 3: Documentation Consolidation (15 min)
 
 **Files to reorganize**:
+
 - Move `VALIDATION_REPORT.md` → `docs/development/validation/0006-api-validation-report.md`
 - Move `OAUTH_TOKEN_GUIDE.md` → `docs/guides/oauth-authentication.md`
 - Update cross-references in README and CLAUDE.md
 
 **Changelog update**:
+
 ```markdown
 ### Fixed
+
 - OAuth token handling when Jobber omits `expires_in` field
 - GraphQL mutation schema (ClientCreate → ClientCreateInput)
 
 ### Validated
+
 - End-to-end OAuth authorization flow with PKCE
 - GraphQL queries (list clients)
 - GraphQL mutations (create client)
@@ -139,6 +153,7 @@ mutation DeleteClient($id: ID!) {
 ### Phase 4: Semantic Release (10 min)
 
 **Steps**:
+
 1. Commit all fixes with conventional commit messages
 2. Run semantic-release to analyze commits
 3. Generate version tag (likely v0.1.0)
@@ -150,16 +165,19 @@ mutation DeleteClient($id: ID!) {
 ### Phase 5: PyPI Publication (Optional, 10 min)
 
 **Prerequisites**:
+
 - Semantic release tag created
 - Build passes (`uv build`)
 - PyPI token in Doppler
 
 **Command**:
+
 ```bash
 UV_PUBLISH_TOKEN=$(doppler secrets get PYPI_TOKEN --project claude-config --config prd --plain) uv publish
 ```
 
 **Validation**:
+
 ```bash
 pip install jobber-python-client
 python -c "from jobber import JobberClient; print('✅ Package installed')"
@@ -168,35 +186,41 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 ## Task List
 
 ### Phase 1: Validate Examples
+
 - [x] Create ADR-0006 documenting production readiness
 - [x] Create this plan document
-- [ ] Run `examples/basic_usage.py` against live API
-- [ ] Run `examples/error_handling.py` against live API
-- [ ] Run `examples/visual_confirmation_urls.py` against live API
-- [ ] Fix any discovered issues
-- [ ] Document validation results
+- [x] Run `examples/basic_usage.py` against live API
+- [x] Run `examples/error_handling.py` against live API
+- [x] Run `examples/visual_confirmation_urls.py` against live API
+- [x] Fix any discovered issues (OAuth expires_in, GraphQL schema)
+- [x] Document validation results (completion summary created)
 
 ### Phase 2: Cleanup
-- [ ] Create `delete_test_client.py` script
-- [ ] Delete test client (ID: 123679362) from Jobber
-- [ ] Verify deletion successful
-- [ ] Add cleanup script to examples/
+
+- [x] Create `delete_test_clients.py` script (lists for manual deletion)
+- [x] Discovered API limitation: Jobber does not support clientDelete mutation
+- [ ] Delete test clients manually via Jobber web UI (user action required)
+- [x] Document cleanup pattern and API limitation
 
 ### Phase 3: Documentation
+
 - [ ] Move VALIDATION_REPORT.md to docs/development/validation/
 - [ ] Move OAUTH_TOKEN_GUIDE.md to docs/guides/
-- [ ] Update CHANGELOG.md with fixes
+- [x] Update CHANGELOG.md with fixes
 - [ ] Update README.md cross-references
 - [ ] Update CLAUDE.md skill references
 
 ### Phase 4: Release
-- [ ] Commit fixes with conventional commits
-- [ ] Run semantic-release
-- [ ] Verify version tag created
-- [ ] Verify GitHub release created
-- [ ] Verify CHANGELOG.md updated
 
-### Phase 5: Publication (Optional)
+- [x] Commit fixes with conventional commits
+- [x] Create version tag locally (v0.1.0)
+- [ ] Create GitHub repository
+- [ ] Push code and tags to GitHub
+- [ ] Run semantic-release for GitHub release
+- [ ] Verify CHANGELOG.md updated by semantic-release
+
+### Phase 5: Publication
+
 - [ ] Verify PyPI token in Doppler
 - [ ] Run `uv build` and verify no errors
 - [ ] Run `uv publish` with token from Doppler
@@ -233,6 +257,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 **Impact**: High (validation fails mid-run)
 
 **Mitigation**:
+
 - Run validation in single session (< 60 min)
 - Monitor token expiration timestamp
 - Re-run `jobber_auth.py` if expired
@@ -243,6 +268,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 **Impact**: Medium (temporary delays)
 
 **Mitigation**:
+
 - Respect throttle status in responses
 - Wait if rate limit threshold exceeded
 - Not a blocker (library handles this correctly)
@@ -253,6 +279,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 **Impact**: High (validation fails)
 
 **Mitigation**:
+
 - Fix type names based on API error messages
 - Document actual types discovered
 - Not preventable, only reactive
@@ -263,6 +290,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 **Impact**: Low (orphaned test data)
 
 **Mitigation**:
+
 - Manual deletion via Jobber web UI if script fails
 - Document workaround in troubleshooting guide
 - Not a release blocker
@@ -350,17 +378,21 @@ All examples produce correct results with real Jobber data."
 ## Test Results
 
 ### Test 1: [Description]
+
 - **Expected**: [What should happen]
 - **Actual**: [What happened]
 - **Status**: ✅ Pass / ❌ Fail
 
 ### Test 2: [Description]
+
 ...
 
 ## Issues Found
+
 - Issue 1: [Description and fix]
 - Issue 2: [Description and fix]
 
 ## Conclusion
+
 ✅ All tests passed / ❌ Fixes required
 ```

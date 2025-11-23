@@ -1,0 +1,49 @@
+[ERROR] file:///Users/terryli/own/jobber/skills/graphql-query-execution/examples/rate_limiting.py | Cannot find file: File not found. Check if file exists and path is correct
+[ERROR] file:///Users/terryli/own/jobber/skills/tests/test_url_helpers.py | Cannot find file: File not found. Check if file exists and path is correct
+[ERROR] file:///Users/terryli/own/jobber/skills/visual-confirmation-urls/examples/terminal_hyperlinks.py | Cannot find file: File not found. Check if file exists and path is correct
+{
+  "total": 180,
+  "successful": 105,
+  "unknown": 0,
+  "unsupported": 0,
+  "timeouts": 0,
+  "redirects": 0,
+  "excludes": 72,
+  "errors": 3,
+  "cached": 0,
+  "success_map": {},
+  "error_map": {
+    "/Users/terryli/own/jobber/skills/visual-confirmation-urls/references/terminal-hyperlinks.md": [
+      {
+        "url": "file:///Users/terryli/own/jobber/skills/tests/test_url_helpers.py",
+        "status": {
+          "text": "Cannot find file",
+          "details": "File not found. Check if file exists and path is correct"
+        }
+      }
+    ],
+    "/Users/terryli/own/jobber/skills/visual-confirmation-urls/SKILL.md": [
+      {
+        "url": "file:///Users/terryli/own/jobber/skills/visual-confirmation-urls/examples/terminal_hyperlinks.py",
+        "status": {
+          "text": "Cannot find file",
+          "details": "File not found. Check if file exists and path is correct"
+        }
+      }
+    ],
+    "/Users/terryli/own/jobber/skills/graphql-query-execution/SKILL.md": [
+      {
+        "url": "file:///Users/terryli/own/jobber/skills/graphql-query-execution/examples/rate_limiting.py",
+        "status": {
+          "text": "Cannot find file",
+          "details": "File not found. Check if file exists and path is correct"
+        }
+      }
+    ]
+  },
+  "suggestion_map": {},
+  "redirect_map": {},
+  "excluded_map": {},
+  "duration_secs": 0,
+  "detailed_stats": false
+}
