@@ -4,16 +4,19 @@ on:
   push:
     branches:
       - main
+      - beta
 
 permissions:
   contents: write
   issues: write
   pull-requests: write
+  id-token: write  # Required for OIDC trusted publishing (2025 standard)
 
 jobs:
   release:
-    name: Release
+    name: Automated Release
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,20 +27,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '24'  # semantic-release v25+ requires Node 22.14+ (v24.10.0+ for v24 range)
 
       - name: Install dependencies
-        run: |
-          npm install -g \
-            semantic-release@24 \
-            @semantic-release/changelog@6 \
-            @semantic-release/git@10 \
-            @semantic-release/github@10 \
-            @semantic-release/commit-analyzer@13 \
-            @semantic-release/release-notes-generator@14 \
-            conventional-changelog-conventionalcommits@8
+        run: npm ci
+
+      - name: Verify dependency signatures
+        run: npm audit signatures
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          # NPM_TOKEN not needed with OIDC trusted publishing
+        run: npm run release
