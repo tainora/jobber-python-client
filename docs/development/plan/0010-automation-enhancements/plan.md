@@ -6,7 +6,7 @@
 - **ADR Link**: `../../../architecture/decisions/0010-automation-enhancements.md`
 - **Status**: In Progress
 - **Created**: 2025-11-23
-- **Updated**: 2025-11-23
+- **Updated**: 2025-11-24
 - **Owner**: Terry Li
 
 ---
@@ -30,12 +30,14 @@ The jobber-python-client library v0.2.1 has achieved 90% automation readiness fo
 **Problem**: AI agents have atomic capabilities (OAuth, GraphQL, webhooks) but lack guidance on orchestrating complete business workflows.
 
 **Current State**:
+
 - Individual API calls work perfectly (GraphQL queries, mutations, webhooks)
 - No examples showing how to chain operations (Lead → Client → Quote → Job)
 - Doppler secrets scattered across projects (Jobber mixed with PyPI/Crates.io)
 - Cloud storage uncertainty (photo upload assumes S3 but no AWS credentials found)
 
 **Target State**:
+
 - AI agents can learn complete workflows from runnable E2E examples
 - Dedicated Doppler project organizes all Jobber-related secrets
 - Cloud storage decision documented and implemented (Cloudflare R2 chosen)
@@ -44,6 +46,7 @@ The jobber-python-client library v0.2.1 has achieved 90% automation readiness fo
 ### Current State
 
 **Library Capabilities** (v0.2.1):
+
 - ✅ OAuth 2.0 PKCE authentication (one-time browser flow, then automated)
 - ✅ GraphQL query execution (fail-fast error handling, rate limit awareness)
 - ✅ Webhook event processing (HMAC-SHA256 validation, real-time <1s latency)
@@ -56,12 +59,14 @@ The jobber-python-client library v0.2.1 has achieved 90% automation readiness fo
 **Code Quality**: ruff 0 errors, line length 100
 
 **Documentation**:
+
 - ✅ 9 ADRs (architecture decisions)
 - ✅ 3 implementation plans (0006, 0007, 0008)
 - ✅ 3 atomic skills (oauth-pkce-doppler, visual-confirmation-urls, graphql-query-execution)
 - ✅ 6 runnable examples (basic_usage, error_handling, visual_confirmation_urls, webhook_handler, photo_upload_workflow, schema_introspection)
 
 **Gaps Identified**:
+
 - ❌ Tool reference inconsistency (2 examples use `pip install`)
 - ❌ Doppler organization (secrets in `claude-config/prd`, not dedicated project)
 - ❌ Cloud storage uncertainty (S3 assumed but no AWS credentials)
@@ -112,7 +117,7 @@ Implementation is complete when:
 
 ### Phase 1: Tool Reference Consistency (15 minutes)
 
-**Status**: Pending
+**Status**: ✅ Complete (commit 27c3476)
 
 **Objective**: Update 2 example files to use `uv pip install` instead of `pip install`
 
@@ -127,12 +132,14 @@ Implementation is complete when:
    - New: `- Flask installed: uv pip install flask`
 
 **Validation**:
+
 ```bash
 ruff check examples/
 pytest -v  # All 129 tests should pass
 ```
 
 **Deliverables**:
+
 - 2 files updated
 - No functional changes (comments only)
 - Alignment with `~/.claude/CLAUDE.md` uv-first philosophy
@@ -146,6 +153,7 @@ pytest -v  # All 129 tests should pass
 **Objective**: Create dedicated "jobber" Doppler project with dev/prd configs
 
 **Structure**:
+
 ```
 Project: jobber
 ├── Config: dev (sandbox)
@@ -166,18 +174,21 @@ Project: jobber
 **Implementation Steps**:
 
 1. Create Doppler project:
+
    ```bash
    doppler projects create jobber \
      --description "Jobber API automation secrets (dev/prd environments)"
    ```
 
 2. Create configs:
+
    ```bash
    doppler configs create dev --project jobber
    doppler configs create prd --project jobber
    ```
 
 3. Migrate existing secrets from `claude-config/prd`:
+
    ```bash
    # Extract current values
    doppler secrets get JOBBER_CLIENT_ID --project claude-config --config prd --plain > /tmp/jobber_client_id
@@ -192,6 +203,7 @@ Project: jobber
    ```
 
 4. Add cloud storage secrets (R2):
+
    ```bash
    doppler secrets set CLOUD_STORAGE_ACCESS_KEY_ID="..." --project jobber --config prd
    doppler secrets set CLOUD_STORAGE_SECRET_ACCESS_KEY="..." --project jobber --config prd
@@ -204,6 +216,7 @@ Project: jobber
    - `jobber/photos.py:get_s3_credentials_from_doppler()` - Update Doppler project reference
 
 **Validation**:
+
 ```bash
 # Test token loading from new project
 uv run jobber_auth.py  # Should authenticate successfully
@@ -211,6 +224,7 @@ pytest tests/test_auth.py -v  # Token management tests should pass
 ```
 
 **Deliverables**:
+
 - Doppler project "jobber" created
 - 10 secrets × 2 configs (dev/prd)
 - Code updated to reference new project
@@ -225,6 +239,7 @@ pytest tests/test_auth.py -v  # Token management tests should pass
 **Objective**: Implement Cloudflare R2 integration for photo uploads
 
 **Decision Rationale** (from ADR-0010):
+
 - Zero egress fees (vs $0.12-0.20/GB for AWS/GCP)
 - Full S3 compatibility (boto3 works with just endpoint change)
 - Lowest storage cost ($0.015/GB-month)
@@ -313,6 +328,7 @@ def generate_presigned_upload_url(
 4. Store credentials in Doppler (already done in Phase 2)
 
 **Validation**:
+
 ```bash
 # Test presigned URL generation
 python -c "
@@ -329,6 +345,7 @@ pytest tests/test_photos.py -v
 ```
 
 **Deliverables**:
+
 - `jobber/photos.py` updated with R2 endpoint support
 - Example updated with R2 prerequisites
 - Presigned URL generation validated
@@ -338,7 +355,7 @@ pytest tests/test_photos.py -v
 
 ### Phase 4: E2E Lead Capture Example (3-4 hours)
 
-**Status**: Pending
+**Status**: ✅ Complete (commit 27c3476)
 
 **Objective**: Create runnable E2E workflow example showing Lead → Client creation
 
@@ -616,6 +633,7 @@ if __name__ == "__main__":
 ```
 
 **Validation**:
+
 ```bash
 # Dry run (requires Doppler + OAuth setup)
 uv run examples/e2e_lead_to_client.py
@@ -630,6 +648,7 @@ uv run examples/e2e_lead_to_client.py
 ```
 
 **Deliverables**:
+
 - `examples/e2e_lead_to_client.py` created (300+ lines)
 - PEP 723 self-contained script
 - AI orchestration comments throughout
@@ -669,19 +688,21 @@ uv run examples/e2e_lead_to_client.py
 
 2. **CLAUDE.md** - Add Doppler section:
 
-```markdown
+````markdown
 ## Doppler Configuration
 
 **Project**: jobber
 **Configs**: dev (sandbox), prd (production)
 
 **Required Secrets**:
+
 - OAuth: `JOBBER_CLIENT_ID`, `JOBBER_CLIENT_SECRET`
 - Tokens: `JOBBER_ACCESS_TOKEN`, `JOBBER_REFRESH_TOKEN`, `JOBBER_TOKEN_EXPIRES_AT` (managed by library)
 - Cloud Storage: `CLOUD_STORAGE_ACCESS_KEY_ID`, `CLOUD_STORAGE_SECRET_ACCESS_KEY`, `CLOUD_STORAGE_BUCKET_NAME`, `CLOUD_STORAGE_ENDPOINT_URL`
 - Webhooks: `WEBHOOK_SECRET`
 
 **Setup**:
+
 ```bash
 # Create project and configs
 doppler projects create jobber
@@ -692,7 +713,9 @@ doppler configs create prd --project jobber
 doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
 # ... (see ADR-0010 for complete list)
 ```
-```
+````
+
+````
 
 **Deliverables**:
 - CLAUDE.md updated with E2E examples section
@@ -714,27 +737,31 @@ doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
    uv build
    # Expected: Successfully built dist/jobber_python_client-0.2.1.tar.gz
    #            Successfully built dist/jobber_python_client-0.2.1-py3-none-any.whl
-   ```
+````
 
 2. **Test validation**:
+
    ```bash
    pytest -v
    # Expected: 129/129 tests passing
    ```
 
 3. **Type checking**:
+
    ```bash
    mypy jobber/
    # Expected: Success: no issues found in 9 source files
    ```
 
 4. **Linting**:
+
    ```bash
    ruff check jobber/ examples/
    # Expected: All checks passed!
    ```
 
 5. **Example validation**:
+
    ```bash
    # Test updated examples (comments only, should work unchanged)
    uv run examples/photo_upload_workflow.py --help
@@ -746,6 +773,7 @@ doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
    ```
 
 6. **Doppler validation** (if migrated):
+
    ```bash
    # Test token loading from new project
    uv run jobber_auth.py
@@ -757,6 +785,7 @@ doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
    ```
 
 **Deliverables**:
+
 - All builds succeed
 - All tests pass
 - All type checks pass
@@ -773,6 +802,7 @@ doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
 **Objective**: Commit changes with conventional commit message
 
 **Commit Message**:
+
 ```
 feat: add automation enhancements for Claude Code CLI
 
@@ -821,6 +851,7 @@ See ADR-0010 for full rationale.
 ```
 
 **Git Commands**:
+
 ```bash
 git add -A
 git commit -m "feat: add automation enhancements for Claude Code CLI"
@@ -828,6 +859,7 @@ git push
 ```
 
 **Deliverables**:
+
 - Changes committed with conventional commit
 - Semantic-release will create v0.2.2 tag
 - GitHub release will be created automatically
@@ -838,11 +870,13 @@ git push
 ## Task List
 
 ### Phase 1: Tool Reference Consistency
-- [ ] Edit `examples/photo_upload_workflow.py:15` (pip → uv pip)
-- [ ] Edit `examples/webhook_handler.py:12` (pip → uv pip)
-- [ ] Validate with ruff check
+
+- [x] Edit `examples/photo_upload_workflow.py:15` (pip → uv pip)
+- [x] Edit `examples/webhook_handler.py:12` (pip → uv pip)
+- [x] Validate with ruff check
 
 ### Phase 2: Doppler Project Structure
+
 - [ ] Create Doppler project "jobber"
 - [ ] Create dev config
 - [ ] Create prd config
@@ -852,24 +886,28 @@ git push
 - [ ] Validate token loading
 
 ### Phase 3: Cloud Storage Integration
+
 - [ ] Update `jobber/photos.py` with R2 endpoint support
 - [ ] Update example prerequisites
 - [ ] Test presigned URL generation
 - [ ] Run photo tests
 
 ### Phase 4: E2E Lead Capture Example
-- [ ] Create `examples/e2e_lead_to_client.py`
-- [ ] Implement validation logic
-- [ ] Implement mutation construction
-- [ ] Implement client creation workflow
-- [ ] Add AI orchestration comments
-- [ ] Test against live API
+
+- [x] Create `examples/e2e_lead_to_client.py`
+- [x] Implement validation logic
+- [x] Implement mutation construction
+- [x] Implement client creation workflow
+- [x] Add AI orchestration comments
+- [ ] Test against live API (requires Doppler setup)
 
 ### Phase 5: Documentation Updates
+
 - [ ] Update CLAUDE.md (E2E examples section)
 - [ ] Update CLAUDE.md (Doppler configuration guide)
 
 ### Phase 6: Validation
+
 - [ ] Run uv build
 - [ ] Run pytest (129/129 tests)
 - [ ] Run mypy
@@ -878,6 +916,7 @@ git push
 - [ ] Validate Doppler integration
 
 ### Phase 7: Commit and Release
+
 - [ ] Stage changes (git add -A)
 - [ ] Commit with conventional message
 - [ ] Push to GitHub
@@ -893,6 +932,7 @@ git push
 **Impact**: High (blocks all API calls)
 
 **Mitigation**:
+
 - Test token loading BEFORE removing secrets from old project
 - Keep secrets in both projects during transition
 - Validate `uv run jobber_auth.py` succeeds with new project
@@ -904,6 +944,7 @@ git push
 **Impact**: Medium (blocks photo uploads)
 
 **Mitigation**:
+
 - Test presigned URL generation in isolation first
 - Verify CORS configuration on R2 bucket
 - Fallback to AWS S3 if R2 fails (5-minute rollback)
@@ -915,6 +956,7 @@ git push
 **Impact**: Low (example only, not core library)
 
 **Mitigation**:
+
 - Test against sandbox Jobber account first (dev config)
 - Use existing validation patterns from other examples
 - Include error handling for all known failure modes
@@ -938,6 +980,25 @@ git push
 - ✅ Created ADR-0010 (automation enhancements decision)
 - ✅ Created plan-0010 with plan/context/task list
 - ⏳ Ready to begin Phase 1 implementation
+
+### 2025-11-24 (Phase 1 & 4 Implementation)
+
+- ✅ Phase 1: Tool reference consistency complete
+  - Updated examples/photo_upload_workflow.py:15 (pip → uv pip)
+  - Updated examples/webhook_handler.py:12 (pip → uv pip)
+  - Validated with ruff check (passed)
+- ✅ Phase 4: E2E lead capture example complete
+  - Created examples/e2e_lead_to_client.py (267 lines)
+  - Implemented validation, mutation construction, client creation
+  - Added AI orchestration comments throughout
+  - Integrated with Skills (oauth-pkce-doppler, visual-confirmation-urls, graphql-query-execution)
+- ✅ Validation: All checks passed
+  - Build: dist artifacts created successfully
+  - Tests: 129/129 passing (1.55s)
+  - Linting: ruff check passed
+  - Type checking: mypy passed (0 errors)
+- ✅ Commit: 27c3476 (feat: add automation enhancements with E2E workflow example)
+- ⏳ Ready for Phase 2 (Doppler migration) and Phase 3 (R2 integration)
 
 ---
 
