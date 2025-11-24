@@ -29,7 +29,7 @@ jobs:
           node-version: '24'  # semantic-release v25+ requires Node 22.14+ (v24.10.0+ for v24 range)
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Verify dependency signatures
         run: npm audit signatures
