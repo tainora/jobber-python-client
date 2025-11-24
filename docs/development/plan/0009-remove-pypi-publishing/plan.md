@@ -177,6 +177,7 @@ Implementation is complete when:
 1. ✅ Stage all changes: `git add -A`
 2. ✅ Create conventional commit: `chore: remove PyPI publishing infrastructure`
 3. ✅ Commit message body:
+
    ```
    Remove all PyPI publishing infrastructure and references.
 
@@ -198,6 +199,7 @@ Implementation is complete when:
 
    See ADR-0009 for full rationale.
    ```
+
 4. ✅ Verify commit message format
 5. ⬜ Push to GitHub (semantic-release will create v0.2.2 with updated changelog)
 
@@ -206,14 +208,17 @@ Implementation is complete when:
 ## Task List
 
 ### Setup
+
 - [x] Create ADR-0009
 - [x] Create plan.md (this file)
 
 ### Delete Infrastructure
+
 - [x] Delete `scripts/publish-to-pypi.sh`
 - [x] Edit `.github/workflows/release.yml` (remove OIDC)
 
 ### Update Documentation
+
 - [x] Edit `README.md` (installation section)
 - [x] Edit `CLAUDE.md` (plan reference)
 - [x] Edit `plan/0006-production-readiness-validation/plan.md`
@@ -222,6 +227,7 @@ Implementation is complete when:
 - [x] Edit `validation/0006-completion-summary.md`
 
 ### Validate
+
 - [x] Run `uv build`
 - [x] Run `pytest` (129/129 passed)
 - [x] Run `ruff check`
@@ -229,6 +235,7 @@ Implementation is complete when:
 - [x] Fix pyproject.toml (ruff.target-version, mypy.python_version)
 
 ### Commit
+
 - [x] Stage changes (`git add -A`)
 - [x] Commit with conventional message (commit 2840e26)
 - [ ] Push to GitHub

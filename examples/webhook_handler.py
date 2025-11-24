@@ -9,7 +9,7 @@ This example demonstrates how to:
 4. Handle specific events (QUOTE_APPROVED, INVOICE_PAID)
 
 Prerequisites:
-- Flask installed: pip install flask
+- Flask installed: uv pip install flask
 - Webhook secret stored in Doppler: JOBBER_WEBHOOK_SECRET
 - Webhook URL configured in Jobber Developer Portal: https://your-domain.com/webhook
 

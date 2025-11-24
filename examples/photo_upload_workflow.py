@@ -12,7 +12,7 @@ Prerequisites:
 - S3 bucket configured with CORS
 - AWS credentials in Doppler: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET_NAME
 - Jobber OAuth tokens in Doppler
-- boto3 installed: pip install boto3
+- boto3 installed: uv pip install boto3
 
 S3 Bucket Setup:
 1. Create S3 bucket: aws s3 mb s3://my-bucket
