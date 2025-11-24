@@ -65,7 +65,6 @@ End-to-end validation revealed production blockers:
 
 1. **Consolidate Documentation**: Move validation artifacts into official docs structure
 2. **Create Deletion Script**: Reusable script for cleaning up test Jobber resources
-3. **Publish to PyPI**: Make library installable via `pip install jobber-python-client`
 
 ## Non-Goals
 
@@ -162,27 +161,6 @@ mutation DeleteClient($id: ID!) {
 
 **Expected version**: v0.1.0 (initial release, not production-ready enough for v1.0.0)
 
-### Phase 5: PyPI Publication (Optional, 10 min)
-
-**Prerequisites**:
-
-- Semantic release tag created
-- Build passes (`uv build`)
-- PyPI token in Doppler
-
-**Command**:
-
-```bash
-UV_PUBLISH_TOKEN=$(doppler secrets get PYPI_TOKEN --project claude-config --config prd --plain) uv publish
-```
-
-**Validation**:
-
-```bash
-pip install jobber-python-client
-python -c "from jobber import JobberClient; print('✅ Package installed')"
-```
-
 ## Task List
 
 ### Phase 1: Validate Examples
@@ -207,7 +185,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 - [x] Move VALIDATION_REPORT.md to docs/development/validation/
 - [x] Move OAUTH_TOKEN_GUIDE.md to docs/guides/
 - [x] Update CHANGELOG.md with fixes
-- [x] Update README.md cross-references (PyPI installation, repository URLs)
+- [x] Update README.md cross-references (repository URLs)
 - [x] Update CLAUDE.md skill references (all ADRs listed, paths corrected)
 - [x] Consolidate ADRs to docs/architecture/decisions/ (MADR standard path)
 
@@ -219,15 +197,6 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 - [x] Push code and tags to GitHub
 - [x] Create GitHub release (via gh CLI)
 - [x] Release published at https://github.com/tainora/jobber-python-client/releases/tag/v0.1.0
-
-### Phase 5: Publication
-
-- [x] Verify PyPI token in Doppler
-- [x] Run `uv build` and verify no errors (154K tar.gz, 14K whl)
-- [x] Run `uv publish` with token from Doppler
-- [x] Verify package installable from PyPI
-- [x] Test installation in fresh virtualenv
-- [x] Package published at https://pypi.org/project/jobber-python-client/0.1.0/
 
 ## Success Criteria
 
@@ -247,9 +216,7 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 
 ### Nice to Have
 
-- ✅ Package published to PyPI
-- ✅ Installation validated from PyPI
-- ✅ README badges updated (version, PyPI, license)
+- ✅ README badges updated (version, license)
 
 ## Risks and Mitigations
 
@@ -302,13 +269,10 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 1. **Version number**: Should first release be v0.1.0 (beta) or v1.0.0 (stable)?
    - **Decision**: v0.1.0 (needs more production usage before v1.0.0)
 
-2. **PyPI publication**: Publish now or wait for more testing?
-   - **Decision**: Publish after validation passes (low risk, easy to yank if issues)
-
-3. **Test client cleanup**: Required before release or optional?
+2. **Test client cleanup**: Required before release or optional?
    - **Decision**: Required (don't leave test data in production systems)
 
-4. **Skill example validation**: Test all skill examples or just top-level examples/?
+3. **Skill example validation**: Test all skill examples or just top-level examples/?
    - **Decision**: Top-level only (skills validated during creation)
 
 ## Timeline
@@ -317,9 +281,8 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 - **Phase 2** (Cleanup): 15 minutes
 - **Phase 3** (Documentation): 15 minutes
 - **Phase 4** (Release): 10 minutes
-- **Phase 5** (PyPI): 10 minutes
 
-**Total**: 80 minutes (1.3 hours)
+**Total**: 70 minutes (1.2 hours)
 
 ## SLOs
 
@@ -334,7 +297,6 @@ python -c "from jobber import JobberClient; print('✅ Package installed')"
 - **Doppler**: Tokens must be valid (not expired)
 - **OAuth App**: Developer account and app credentials
 - **GitHub**: Repository access for semantic-release
-- **PyPI**: Token for publication (optional)
 
 ## Appendix: Conventional Commit Messages
 

@@ -14,8 +14,8 @@ Minimal Python client for [Jobber GraphQL API](https://developer.getjobber.com/d
 ## Installation
 
 ```bash
-# Install from PyPI
-pip install jobber-python-client
+# Install from Git (recommended)
+uv add git+https://github.com/tainora/jobber-python-client.git
 
 # Or clone repository for development
 git clone https://github.com/tainora/jobber-python-client.git

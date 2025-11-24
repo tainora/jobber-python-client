@@ -10,7 +10,6 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  id-token: write  # Required for OIDC trusted publishing (2025 standard)
 
 jobs:
   release:
@@ -38,5 +37,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # NPM_TOKEN not needed with OIDC trusted publishing
         run: npm run release

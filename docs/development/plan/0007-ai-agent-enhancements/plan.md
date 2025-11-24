@@ -116,8 +116,6 @@ Implementation is complete when:
 
 3. **Release v0.2.0**: Use semantic-release skill to tag version, generate changelog, create GitHub release
 
-4. **Publish to PyPI**: Use pypi-doppler skill to publish v0.2.0 for public installation
-
 ## Non-Goals
 
 - **Google Routes Integration**: Deferred to Month 1 (short-term roadmap)
@@ -346,7 +344,6 @@ Implementation is complete when:
 
 - v0.2.0 tag on GitHub
 - v0.2.0 GitHub release with changelog
-- v0.2.0 published to PyPI
 
 **Implementation Steps**:
 
@@ -364,17 +361,10 @@ Implementation is complete when:
    - Create GitHub release
    - Push to remote
 
-3. Publish to PyPI via pypi-doppler skill
-   - Skill will fetch PYPI_TOKEN from Doppler
-   - Run `uv build` to create distribution
-   - Run `uv publish` with token
-   - Verify package at https://pypi.org/project/jobber-python-client/0.2.0/
-
 **Auto-Validation**:
 
 - Verify tag created: `git tag -l v0.2.0`
 - Verify GitHub release exists: `gh release view v0.2.0`
-- Verify PyPI package: `pip install jobber-python-client==0.2.0` in fresh venv
 
 ---
 
@@ -429,8 +419,6 @@ Implementation is complete when:
 - [ ] Commit changes with conventional commit messages
 - [ ] Run semantic-release skill (tag v0.2.0)
 - [ ] Verify GitHub release created
-- [ ] Run pypi-doppler skill (publish to PyPI)
-- [ ] Verify PyPI package installable
 
 ---
 
@@ -559,4 +547,4 @@ Following global SLO standards (availability, correctness, observability, mainta
 - **ADR**: `docs/architecture/decisions/0007-ai-agent-enhancements.md`
 - **Analysis Report**: `docs/analysis/jobber-api-ai-readiness-report.md`
 - **Previous Plan**: `docs/development/plan/0006-production-readiness-validation/plan.md`
-- **Skills**: `~/.claude/skills/oauth-pkce-doppler/`, `~/.claude/skills/semantic-release/`, `~/.claude/skills/pypi-doppler/`
+- **Skills**: `~/.claude/skills/oauth-pkce-doppler/`, `~/.claude/skills/semantic-release/`

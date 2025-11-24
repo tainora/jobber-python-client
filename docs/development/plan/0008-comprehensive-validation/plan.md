@@ -591,18 +591,9 @@ pytest --cov=jobber --cov-report=term-missing --cov-report=html
 
 **Expected Version**: v0.2.1 (PATCH bump for test additions)
 
-#### Phase 7.2: PyPI Publication (5 minutes)
-
-**Process**:
-
-1. Invoke `pypi-doppler` skill
-2. Run `./scripts/publish-to-pypi.sh`
-3. Verify package published to https://pypi.org/project/jobber-python-client/0.2.1/
-
 **Phase 7 Deliverables**:
 
 - GitHub release: v0.2.1
-- PyPI package: jobber-python-client 0.2.1
 - Todo: Mark complete
 
 ---
@@ -669,8 +660,6 @@ pytest --cov=jobber --cov-report=term-missing --cov-report=html
 
 - [ ] Push all commits to main branch
 - [ ] Invoke semantic-release skill (create v0.2.1 tag + GitHub release)
-- [ ] Invoke pypi-doppler skill (publish to PyPI)
-- [ ] Verify PyPI package: https://pypi.org/project/jobber-python-client/0.2.1/
 
 ---
 

@@ -130,7 +130,7 @@ Total: 867 LOC
 
 **Implementation Plans** (Google Design Doc format):
 
-- [plan.md (0006)](docs/development/plan/0006-production-readiness-validation/plan.md) - Production readiness, API validation, PyPI publication
+- [plan.md (0006)](docs/development/plan/0006-production-readiness-validation/plan.md) - Production readiness and API validation
 
 **Service Metadata**:
 

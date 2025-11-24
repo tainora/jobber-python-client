@@ -203,36 +203,13 @@ python delete_test_clients.py
    - CHANGELOG.md updated automatically
    - Version bumped in `jobber/__init__.py`
 
-### PyPI Publication
-
-1. **Verify Build**
-
-   ```bash
-   uv build
-   # Outputs: dist/jobber_python_client-0.1.0.tar.gz, dist/jobber_python_client-0.1.0-py3-none-any.whl
-   ```
-
-2. **Publish to PyPI**
-
-   ```bash
-   UV_PUBLISH_TOKEN=$(doppler secrets get PYPI_TOKEN --project claude-config --config prd --plain) uv publish
-   ```
-
-3. **Test Installation**
-   ```bash
-   pip install jobber-python-client
-   python -c "from jobber import JobberClient; print('✅ Package installed')"
-   ```
-
 ### Production Deployment Checklist
 
 - [ ] Create GitHub repository
 - [ ] Push code and tags
 - [ ] Run semantic-release for GitHub release
-- [ ] Publish to PyPI
-- [ ] Test installation from PyPI
 - [ ] Delete test clients from Jobber
-- [ ] Add README badges (version, PyPI, license)
+- [ ] Add README badges (version, license)
 - [ ] Configure branch protection rules
 - [ ] Set up Dependabot for security updates
 
@@ -302,6 +279,6 @@ python delete_test_clients.py
 - Bugs fixed and validated
 - Documentation consolidated
 - Version v0.1.0 tagged
-- Ready for GitHub release and PyPI publication
+- Ready for GitHub release
 
 **The Jobber Python client is production-ready for initial release.**
