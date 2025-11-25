@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/tainora/jobber-python-client/compare/v1.0.0...v1.1.0) (2025-11-25)
+
+
+### Features
+
+* add Doppler secrets migration tooling for v1.0.0 upgrade ([3e474f5](https://github.com/tainora/jobber-python-client/commit/3e474f514cf97e37ba8af1ca8ce695cb14807f9e))
+
 # [1.0.0](https://github.com/tainora/jobber-python-client/compare/v0.3.0...v1.0.0) (2025-11-25)
 
 
