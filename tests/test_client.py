@@ -48,8 +48,8 @@ class TestFromDoppler:
 
         client = JobberClient.from_doppler()
 
-        # Verify defaults used
-        mock_from_doppler.assert_called_once_with("claude-config", "dev")
+        # Verify defaults used (updated to jobber/prd as of ADR-0010)
+        mock_from_doppler.assert_called_once_with("jobber", "prd")
 
         assert client.token_manager is mock_token_manager
 

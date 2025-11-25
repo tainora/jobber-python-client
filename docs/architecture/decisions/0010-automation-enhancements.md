@@ -15,6 +15,7 @@ The jobber-python-client library (v0.2.1) has achieved 90% automation readiness 
 **Automation Readiness**: 90% (up from 85% pre-v0.2.0)
 
 **Implemented Capabilities**:
+
 - OAuth 2.0 PKCE authentication with automatic token refresh
 - GraphQL query execution with fail-fast error handling
 - Real-time webhook event processing (HMAC-SHA256 validation)
@@ -32,6 +33,7 @@ The jobber-python-client library (v0.2.1) has achieved 90% automation readiness 
 ### Business Impact
 
 **Current Workflow Autonomy** (from ADR-0007):
+
 - Lead Capture: 100%
 - Quoting: 95%
 - Job Scheduling: 80%
@@ -62,6 +64,7 @@ Implement four targeted enhancements to enable full Claude Code CLI automation:
 **Decision**: Update all example files to use `uv pip install` instead of `pip install`.
 
 **Affected Files**:
+
 - `examples/photo_upload_workflow.py:15` - boto3 installation
 - `examples/webhook_handler.py:12` - Flask installation
 
@@ -74,6 +77,7 @@ Implement four targeted enhancements to enable full Claude Code CLI automation:
 **Decision**: Create dedicated "jobber" Doppler project with dual-config (dev/prd) structure.
 
 **Structure**:
+
 ```
 Project: jobber
 ├── Config: dev (sandbox Jobber account)
@@ -92,12 +96,14 @@ Project: jobber
 ```
 
 **Rationale**:
+
 - **Separation of concerns**: Jobber secrets isolated from unrelated automation (PYPI_TOKEN, CRATES_IO)
 - **Environment isolation**: Dev/prd separation prevents accidental production modifications
 - **Scalability**: Supports future multi-tenant or franchise expansion
 - **Standard practice**: Matches typical deployment patterns (dev/staging/prod)
 
 **Migration Path**:
+
 1. Create new "jobber" project in Doppler
 2. Copy existing secrets from `claude-config/prd` to `jobber/prd`
 3. Update code to reference `--project jobber --config prd`
@@ -112,20 +118,22 @@ Project: jobber
 
 **Evaluated Options**:
 
-| Platform | Free Tier | Egress Cost | S3 Compatible | Migration Effort |
-|----------|-----------|-------------|---------------|------------------|
-| **Cloudflare R2** | 10GB/month | **$0 (forever)** | Full (boto3) | 5 minutes |
-| AWS S3 | 5GB (12 months) | $0.12-0.20/GB | Native | Already setup |
-| Oracle Cloud | 20GB (always) | $0.0085/GB | Full (boto3) | 30 minutes |
-| Google Cloud | 5GB (US only) | $0.12-0.20/GB | Partial | 2-4 hours |
+| Platform          | Free Tier       | Egress Cost      | S3 Compatible | Migration Effort |
+| ----------------- | --------------- | ---------------- | ------------- | ---------------- |
+| **Cloudflare R2** | 10GB/month      | **$0 (forever)** | Full (boto3)  | 5 minutes        |
+| AWS S3            | 5GB (12 months) | $0.12-0.20/GB    | Native        | Already setup    |
+| Oracle Cloud      | 20GB (always)   | $0.0085/GB       | Full (boto3)  | 30 minutes       |
+| Google Cloud      | 5GB (US only)   | $0.12-0.20/GB    | Partial       | 2-4 hours        |
 
 **Rationale for R2**:
+
 1. **Zero egress fees**: Eliminates future cost concerns at scale (serving 1000s of photos = $0 vs $12-20/month on GCP/AWS)
 2. **Full S3 compatibility**: Existing boto3 code works with just endpoint change (5-minute migration vs 2-4 hour GCP rewrite)
 3. **Lowest storage cost**: $0.015/GB-month (vs $0.020 AWS, $0.0255 Oracle)
 4. **Future-proof**: Cost-effective at any scale (0-100,000 photos)
 
 **Migration from S3** (if needed):
+
 ```python
 # Old (AWS S3)
 s3_client = boto3.client('s3')
@@ -152,6 +160,7 @@ s3_client = boto3.client(
 **First Example**: Lead Capture → Client Creation
 
 **Structure**:
+
 ```python
 # /// script
 # dependencies = ["jobber-python-client"]
@@ -177,12 +186,14 @@ Skills Referenced:
 ```
 
 **Rationale**:
+
 - **Runnable**: Works as standalone script (`uv run examples/e2e_lead_to_client.py`)
 - **AI-learnable**: Comments teach AI agents decision points and skill integration
 - **Progressive disclosure**: References atomic skills for deeper patterns
 - **Validation**: Can be executed to verify end-to-end functionality
 
 **Skills Integration**:
+
 - Examples reference existing atomic skills (oauth-pkce-doppler, visual-confirmation-urls, graphql-query-execution)
 - No new skills created initially (validate example value first)
 - Future: Extract patterns into atomic skills if examples prove valuable
@@ -214,18 +225,21 @@ Skills Referenced:
 ## Implementation Timeline
 
 **Phase 1: Foundation** (2-3 hours)
+
 1. Update example files (15 min)
 2. Create Doppler project structure (30 min)
 3. Document cloud storage decision (15 min)
 4. Validate changes (30 min)
 
 **Phase 2: E2E Examples** (8-12 hours)
+
 1. Create lead capture example (3-4 hours)
 2. Validate against live API (1 hour)
 3. Document AI orchestration patterns (2 hours)
 4. Create additional examples if time permits (4-6 hours)
 
 **Phase 3: Documentation** (2-3 hours)
+
 1. Create ADR-0010 (this document)
 2. Create plan-0010
 3. Update CLAUDE.md with skill navigation

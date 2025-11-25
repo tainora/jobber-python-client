@@ -1,15 +1,13 @@
 # [0.3.0](https://github.com/tainora/jobber-python-client/compare/v0.2.1...v0.3.0) (2025-11-24)
 
-
 ### Bug Fixes
 
-* use npm install instead of npm ci (npm 11.x bug workaround) ([d70e3b4](https://github.com/tainora/jobber-python-client/commit/d70e3b4591599292f1ac7d42ed8366224c7c8a8f))
-* use portable sed syntax for Linux compatibility ([e6bd87d](https://github.com/tainora/jobber-python-client/commit/e6bd87d7a1ff06b4c931f8a11d7eb4ab44fa5078))
-
+- use npm install instead of npm ci (npm 11.x bug workaround) ([d70e3b4](https://github.com/tainora/jobber-python-client/commit/d70e3b4591599292f1ac7d42ed8366224c7c8a8f))
+- use portable sed syntax for Linux compatibility ([e6bd87d](https://github.com/tainora/jobber-python-client/commit/e6bd87d7a1ff06b4c931f8a11d7eb4ab44fa5078))
 
 ### Features
 
-* add automation enhancements with E2E workflow example ([27c3476](https://github.com/tainora/jobber-python-client/commit/27c34762c1b8de2ff22869eef97ac0c11f8b9f2b))
+- add automation enhancements with E2E workflow example ([27c3476](https://github.com/tainora/jobber-python-client/commit/27c34762c1b8de2ff22869eef97ac0c11f8b9f2b))
 
 ## [0.2.1](https://github.com/tainora/jobber-python-client/compare/v0.2.0...v0.2.1) (2025-11-23)
 

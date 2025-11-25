@@ -23,9 +23,10 @@ class TestGetS3CredentialsFromDoppler:
         """get_s3_credentials_from_doppler() returns credentials dict."""
         # Mock subprocess.run to return credentials
         mock_run.side_effect = [
-            Mock(stdout="AKIAIOSFODNN7EXAMPLE"),  # AWS_ACCESS_KEY_ID
-            Mock(stdout="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"),  # AWS_SECRET_ACCESS_KEY
-            Mock(stdout="my-photo-bucket"),  # S3_BUCKET_NAME
+            Mock(stdout="AKIAIOSFODNN7EXAMPLE", returncode=0),  # CLOUD_STORAGE_ACCESS_KEY_ID
+            Mock(stdout="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", returncode=0),  # CLOUD_STORAGE_SECRET_ACCESS_KEY
+            Mock(stdout="my-photo-bucket", returncode=0),  # CLOUD_STORAGE_BUCKET_NAME
+            Mock(stdout="https://example.r2.cloudflarestorage.com", returncode=0),  # CLOUD_STORAGE_ENDPOINT_URL
         ]
 
         result = get_s3_credentials_from_doppler()
@@ -34,6 +35,7 @@ class TestGetS3CredentialsFromDoppler:
             "aws_access_key_id": "AKIAIOSFODNN7EXAMPLE",
             "aws_secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
             "bucket_name": "my-photo-bucket",
+            "endpoint_url": "https://example.r2.cloudflarestorage.com",
         }
 
     @patch("subprocess.run")
@@ -41,12 +43,13 @@ class TestGetS3CredentialsFromDoppler:
         """Raises JobberException when any credential is empty."""
         # Mock subprocess.run to return empty secret key
         mock_run.side_effect = [
-            Mock(stdout="AKIAIOSFODNN7EXAMPLE"),  # AWS_ACCESS_KEY_ID
-            Mock(stdout=""),  # AWS_SECRET_ACCESS_KEY (empty)
-            Mock(stdout="my-photo-bucket"),  # S3_BUCKET_NAME
+            Mock(stdout="AKIAIOSFODNN7EXAMPLE", returncode=0),  # CLOUD_STORAGE_ACCESS_KEY_ID
+            Mock(stdout="", returncode=0),  # CLOUD_STORAGE_SECRET_ACCESS_KEY (empty)
+            Mock(stdout="my-photo-bucket", returncode=0),  # CLOUD_STORAGE_BUCKET_NAME
+            Mock(stdout="", returncode=1),  # CLOUD_STORAGE_ENDPOINT_URL (optional)
         ]
 
-        with pytest.raises(JobberException, match="S3 credentials incomplete"):
+        with pytest.raises(JobberException, match="Cloud storage credentials incomplete"):
             get_s3_credentials_from_doppler()
 
     @patch("subprocess.run")
@@ -56,7 +59,7 @@ class TestGetS3CredentialsFromDoppler:
             returncode=1, cmd=["doppler", "secrets", "get"], stderr="Doppler error"
         )
 
-        with pytest.raises(JobberException, match="Failed to fetch S3 credentials"):
+        with pytest.raises(JobberException, match="Failed to fetch cloud storage credentials"):
             get_s3_credentials_from_doppler()
 
 
@@ -84,7 +87,7 @@ class TestGeneratePresignedUploadUrl:
 
         # Verify boto3.client called with credentials
         mock_boto3_client.assert_called_once_with(
-            "s3",
+            service_name="s3",
             aws_access_key_id="AKIAIOSFODNN7EXAMPLE",
             aws_secret_access_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
         )
@@ -109,6 +112,7 @@ class TestGeneratePresignedUploadUrl:
             "aws_access_key_id": "AKIAIOSFODNN7EXAMPLE",
             "aws_secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
             "bucket_name": "my-photo-bucket",
+            "endpoint_url": "",  # Empty for AWS S3
         }
 
         mock_s3_client = Mock()
@@ -122,9 +126,9 @@ class TestGeneratePresignedUploadUrl:
         # Verify Doppler credentials were fetched
         mock_get_creds.assert_called_once()
 
-        # Verify boto3.client called with Doppler credentials
+        # Verify boto3.client called with Doppler credentials (no endpoint_url for AWS S3)
         mock_boto3_client.assert_called_once_with(
-            "s3",
+            service_name="s3",
             aws_access_key_id="AKIAIOSFODNN7EXAMPLE",
             aws_secret_access_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
         )

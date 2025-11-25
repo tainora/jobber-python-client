@@ -31,7 +31,7 @@ def example_create_client_with_url() -> None:
     """
     print("=== Create Client with Web URL ===\n")
 
-    client = JobberClient.from_doppler("claude-config", "dev")
+    client = JobberClient.from_doppler()  # Uses jobber/prd by default
 
     # CRITICAL: Include jobberWebUri in mutation response
     mutation = """
@@ -78,7 +78,7 @@ def example_query_clients_with_urls() -> None:
     """
     print("\n=== Query Clients with Web URLs ===\n")
 
-    client = JobberClient.from_doppler("claude-config", "dev")
+    client = JobberClient.from_doppler()  # Uses jobber/prd by default
 
     # CRITICAL: Include jobberWebUri in query
     query = """
@@ -117,7 +117,7 @@ def example_create_quote_with_preview_url() -> None:
     print("⚠️  Quote creation requires valid client and job IDs")
     print("    Pattern shown - adapt with your IDs\n")
     print("Example setup:")
-    print("    client = JobberClient.from_doppler('claude-config', 'dev')\n")
+    print("    client = JobberClient.from_doppler()  # Uses jobber/prd by default\n")
     print("Mutation fields to include:")
     print("  • jobberWebUri  → View in your Jobber account")
     print("  • previewUrl    → Share with client for approval")
@@ -132,7 +132,7 @@ def example_url_based_validation() -> None:
     """
     print("\n=== URL-Based Validation Pattern ===\n")
 
-    client = JobberClient.from_doppler("claude-config", "dev")
+    client = JobberClient.from_doppler()  # Uses jobber/prd by default
 
     query = """
         query GetClient($id: ID!) {

@@ -53,6 +53,53 @@ result = client.execute_query("{ clients { totalCount } }")
 
 **Complete documentation**: [README.md](README.md)
 
+## Doppler Configuration
+
+**Dedicated Project Structure** (since v0.3.0):
+
+```
+Project: jobber
+├── Config: dev (sandbox Jobber account)
+│   ├── JOBBER_CLIENT_ID
+│   ├── JOBBER_CLIENT_SECRET
+│   ├── JOBBER_ACCESS_TOKEN (managed by library)
+│   ├── JOBBER_REFRESH_TOKEN (managed by library)
+│   ├── JOBBER_TOKEN_EXPIRES_AT (managed by library)
+│   ├── CLOUD_STORAGE_ACCESS_KEY_ID (optional, for photo uploads)
+│   ├── CLOUD_STORAGE_SECRET_ACCESS_KEY (optional)
+│   ├── CLOUD_STORAGE_BUCKET_NAME (optional)
+│   └── CLOUD_STORAGE_ENDPOINT_URL (optional, for R2)
+└── Config: prd (production Jobber account)
+    └── [same structure, production values]
+```
+
+**Usage**:
+
+```python
+# Default: uses jobber/prd
+client = JobberClient.from_doppler()
+
+# Custom project/config (e.g., dev environment)
+client = JobberClient.from_doppler("jobber", "dev")
+```
+
+**Setup** (one-time):
+
+1. Create Doppler project: `doppler projects create jobber`
+2. Add OAuth credentials (get from [Jobber Developer Portal](https://developer.getjobber.com/)):
+   ```bash
+   doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
+   doppler secrets set JOBBER_CLIENT_SECRET="..." --project jobber --config prd
+   ```
+3. Run OAuth flow: `uv run jobber_auth.py`
+4. (Optional) Add cloud storage credentials for photo uploads
+
+**Cloud Storage** (Cloudflare R2 recommended):
+
+- Zero egress fees (vs $0.12-0.20/GB for AWS/GCP)
+- Full S3 compatibility (boto3 works with just endpoint change)
+- See [ADR-0010](docs/architecture/decisions/0010-automation-enhancements.md) for decision rationale
+
 ## API Reference
 
 See [README.md#api-reference](README.md#api-reference) for complete API documentation.

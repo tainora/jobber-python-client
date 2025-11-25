@@ -16,7 +16,7 @@ class JobberClient:
     Jobber GraphQL API client.
 
     Usage:
-        client = JobberClient.from_doppler("claude-config", "dev")
+        client = JobberClient.from_doppler()  # Uses jobber/prd by default
         result = client.execute_query("{ clients { totalCount } }")
 
     Error handling:
@@ -42,14 +42,14 @@ class JobberClient:
 
     @classmethod
     def from_doppler(
-        cls, doppler_project: str = "claude-config", doppler_config: str = "dev"
+        cls, doppler_project: str = "jobber", doppler_config: str = "prd"
     ) -> "JobberClient":
         """
         Create client loading credentials from Doppler.
 
         Args:
-            doppler_project: Doppler project name
-            doppler_config: Doppler config name
+            doppler_project: Doppler project name (default: "jobber")
+            doppler_config: Doppler config name (default: "prd")
 
         Returns:
             Configured JobberClient
@@ -59,7 +59,12 @@ class JobberClient:
             AuthenticationError: Token loading fails
 
         Example:
+            # Default (uses jobber/prd)
             client = JobberClient.from_doppler()
+
+            # Custom project/config
+            client = JobberClient.from_doppler("jobber", "dev")
+
             result = client.execute_query("{ clients { totalCount } }")
         """
         token_manager = TokenManager.from_doppler(doppler_project, doppler_config)
