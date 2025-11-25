@@ -1,3 +1,20 @@
+# [1.0.0](https://github.com/tainora/jobber-python-client/compare/v0.3.0...v1.0.0) (2025-11-25)
+
+
+### Features
+
+* implement Doppler migration and Cloudflare R2 support ([516718e](https://github.com/tainora/jobber-python-client/commit/516718e5627805638e0149b3850885252647fc38))
+
+
+### BREAKING CHANGES
+
+* Default Doppler project changed from 'claude-config' to 'jobber'.
+Users must either:
+1. Create 'jobber' Doppler project and migrate secrets, OR
+2. Explicitly specify old project: JobberClient.from_doppler('claude-config', 'dev')
+
+See ADR-0010 for decision rationale.
+
 # [0.3.0](https://github.com/tainora/jobber-python-client/compare/v0.2.1...v0.3.0) (2025-11-24)
 
 ### Bug Fixes
