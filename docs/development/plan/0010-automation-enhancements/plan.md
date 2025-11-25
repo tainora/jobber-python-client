@@ -4,10 +4,11 @@
 
 - **ADR ID**: 0010
 - **ADR Link**: `../../../architecture/decisions/0010-automation-enhancements.md`
-- **Status**: In Progress
+- **Status**: Complete
 - **Created**: 2025-11-23
-- **Updated**: 2025-11-24
+- **Updated**: 2025-11-25
 - **Owner**: Terry Li
+- **Releases**: v0.3.0, v1.0.0, v1.1.0
 
 ---
 
@@ -1032,6 +1033,28 @@ git push
 - ✅ v1.0.0 released with BREAKING CHANGE
 - ✅ CHANGELOG.md updated with migration guidance
 - ⏳ Migration tooling pending (probe for existing scripts first)
+
+### 2025-11-25 (v1.1.0 Release - Migration Tooling)
+
+- ✅ Migration tooling complete
+  - Created scripts/migrate_doppler_secrets.py (370 lines, type-safe)
+  - Dry-run mode, flexible targeting, safety features
+  - Successfully migrated 9 secrets from claude-config/dev → jobber/dev
+  - Tested library with migrated secrets (functional)
+- ✅ Documentation updated
+  - Added "Migration from v0.x" section to CLAUDE.md
+  - Step-by-step migration guide with commands
+  - Breaking change notes and migration options
+- ✅ v1.1.0 released (2025-11-25T00:19:48Z)
+- ✅ Post-release fix
+  - Identified semantic-release bug (sed overwrites tool config)
+  - Created scripts/update_version.py (context-aware version update)
+  - Updated .releaserc.json to use Python script instead of sed
+  - Prevents future pyproject.toml corruption on releases
+- 📊 Final Status: **Plan Complete**
+  - All 7 phases implemented and released
+  - Automation readiness: 90% → 95%
+  - Releases: v0.3.0 (Phase 1 & 4), v1.0.0 (Phase 2 & 3), v1.1.0 (Migration)
 
 ---
 
