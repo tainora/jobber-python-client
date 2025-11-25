@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/tainora/jobber-python-client/compare/v1.1.0...v1.1.1) (2025-11-25)
+
+
+### Bug Fixes
+
+* correct pyproject.toml after semantic-release overwrites ([d05fe20](https://github.com/tainora/jobber-python-client/commit/d05fe200d357195c8256cc7e02e7ed0da42c6733))
+
 # [1.1.0](https://github.com/tainora/jobber-python-client/compare/v1.0.0...v1.1.0) (2025-11-25)
 
 
