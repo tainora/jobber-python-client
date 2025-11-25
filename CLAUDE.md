@@ -100,6 +100,32 @@ client = JobberClient.from_doppler("jobber", "dev")
 - Full S3 compatibility (boto3 works with just endpoint change)
 - See [ADR-0010](docs/architecture/decisions/0010-automation-enhancements.md) for decision rationale
 
+**Migration from v0.x** (⚠️ BREAKING CHANGE in v1.0.0):
+
+If upgrading from v0.x, run the migration script to move secrets from `claude-config` to `jobber` project:
+
+```bash
+# Dry run (preview changes)
+python scripts/migrate_doppler_secrets.py --dry-run
+
+# Migrate to dev config (recommended first step)
+python scripts/migrate_doppler_secrets.py
+
+# Verify migration
+doppler secrets --project jobber --config dev
+
+# Test library
+python -c "from jobber import JobberClient; JobberClient.from_doppler('jobber', 'dev')"
+
+# (Optional) Migrate to prd config if using default
+python scripts/migrate_doppler_secrets.py --include-prd
+```
+
+**Notes**:
+- Default changed from `("claude-config", "dev")` to `("jobber", "prd")` in v1.0.0
+- Migration script copies secrets but doesn't delete source (manual cleanup required)
+- For production use, create separate prd secrets (don't copy dev secrets)
+
 ## API Reference
 
 See [README.md#api-reference](README.md#api-reference) for complete API documentation.

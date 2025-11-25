@@ -797,7 +797,7 @@ doppler secrets set JOBBER_CLIENT_ID="..." --project jobber --config prd
 
 ### Phase 7: Commit and Release (15 minutes)
 
-**Status**: Pending
+**Status**: ✅ Complete (commit 516718e, v1.0.0)
 
 **Objective**: Commit changes with conventional commit message
 
@@ -887,7 +887,7 @@ git push
 ### Phase 3: Cloud Storage Integration
 
 - [x] Update `jobber/photos.py` with R2 endpoint support
-- [x] Change secret names (AWS_* → CLOUD_STORAGE_*)
+- [x] Change secret names (AWS*\* → CLOUD_STORAGE*\*)
 - [x] Add endpoint_url parameter support
 - [x] Update tests to match new signatures
 - [x] Run photo tests (11/11 passing)
@@ -916,10 +916,10 @@ git push
 
 ### Phase 7: Commit and Release
 
-- [ ] Stage changes (git add -A)
-- [ ] Commit with conventional message
-- [ ] Push to GitHub
-- [ ] Verify semantic-release creates v0.2.2
+- [x] Stage changes (git add -A)
+- [x] Commit with conventional message
+- [x] Push to GitHub
+- [x] Verify semantic-release creates v1.0.0
 
 ---
 
@@ -1009,7 +1009,7 @@ git push
   - Updated tests to match new defaults
 - ✅ Phase 3: Cloud Storage Integration (R2) complete
   - Updated jobber/photos.py with R2 endpoint support
-  - Changed secret names (AWS_* → CLOUD_STORAGE_*)
+  - Changed secret names (AWS*\* → CLOUD_STORAGE*\*)
   - Added endpoint_url parameter support
   - Updated all tests for new signatures
 - ✅ Phase 5: Documentation updates complete
@@ -1021,7 +1021,17 @@ git push
   - Type checking: mypy 0 errors
   - Linting: ruff all checks passed
   - Fixed pyproject.toml (semantic-release bug)
-- ⏳ Ready for Phase 7 (commit and release)
+- ✅ Phase 7: Commit and release complete
+  - Commit: 516718e (feat: implement Doppler migration and Cloudflare R2 support)
+  - Release: v1.0.0 (2025-11-25T00:06:32Z)
+  - Breaking change: Default Doppler project changed from claude-config to jobber
+
+### 2025-11-25 (v1.0.0 Release - All Phases Complete)
+
+- ✅ All phases complete (1-7)
+- ✅ v1.0.0 released with BREAKING CHANGE
+- ✅ CHANGELOG.md updated with migration guidance
+- ⏳ Migration tooling pending (probe for existing scripts first)
 
 ---
 
